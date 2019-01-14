@@ -1,11 +1,17 @@
 cmake_minimum_required (VERSION 3.10)
 project (TRPL)
 add_executable(TRPL
-               testscanner.c)
+               testparser.c)
 
+find_package(BISON)
 find_package(FLEX)
+
+BISON_TARGET(Parser grammar.y ${CMAKE_CURRENT_BINARY_DIR}/parser.c)
 FLEX_TARGET(Scanner scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.c)
-set(SRC_FILES ${FLEX_Scanner_OUTPUTS})
-add_library(scannerlib ${SRC_FILES})
-target_link_libraries(scannerlib crypto c ${FLEX_LIBRARIES})
+ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
+
+add_library(parserlib ${BISON_Parser_OUTPUTS})
+add_library(scannerlib ${FLEX_Scanner_OUTPUTS})
+
+target_link_libraries(TRPL parserlib)
 target_link_libraries(TRPL scannerlib)
