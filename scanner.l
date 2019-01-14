@@ -12,6 +12,10 @@ letter [a-zA-Z]
 "/"                           return DIVIDED;
 "("                           return LPARENT;
 ")"                           return RPARENT;
+"{"                           return LBRACE;
+"}"                           return RBRACE;
+"["                           return LBRACKET;
+"]"                           return RBRACKET;
 ","                           return COMMA;
 "."                           return PERIOD;
 ":="                          return BECOMES;
