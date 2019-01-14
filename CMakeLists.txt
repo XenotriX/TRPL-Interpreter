@@ -1,13 +1,16 @@
 cmake_minimum_required (VERSION 3.10)
 project (TRPL)
 add_executable(TRPL
-               testparser.c)
+               testparser.cpp
+               ast.cpp)
 
 find_package(BISON)
 find_package(FLEX)
 
-BISON_TARGET(Parser grammar.y ${CMAKE_CURRENT_BINARY_DIR}/parser.c)
-FLEX_TARGET(Scanner scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.c)
+include_directories(./ build/)
+
+BISON_TARGET(Parser grammar.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cxx)
+FLEX_TARGET(Scanner scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.cxx)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 add_library(parserlib ${BISON_Parser_OUTPUTS})
