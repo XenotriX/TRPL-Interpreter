@@ -24,11 +24,12 @@ void Interpreter::exec(std::vector<ast::Statement*> stmts)
       case ast::PrintStatement_t:
       {
         auto print = static_cast<ast::PrintStatement*>(stmt);
-        std::cout << "Print" << std::endl;
         std::vector<ast::Expression*> list = print->list;
-        std::cout << list.size() << std::endl;
-        for (auto expr: list)
-          std::cout << static_cast<ast::Identifier*>(expr)->id << std::endl;
+        for (auto expr: list) {
+          Value val = eval(expr);
+          if (std::holds_alternative<double>(val)) log(std::to_string(std::get<double>(val)));
+          else if (std::holds_alternative<std::string>(val)) log(std::get<std::string>(val));
+        }
         break;
       }
       default:
@@ -53,6 +54,7 @@ Value Interpreter::eval(ast::Expression* expr)
 {
   switch(expr->dtype) {
     case ast::Identifier_t:
+      return eval(variables.at(static_cast<ast::Identifier*>(expr)->id));
       break;
     case ast::Undefined_t:
       break;
