@@ -35,7 +35,7 @@
     #include <string>
     #include <sstream>
 
-    #include "scanner.hpp"
+    #include "parser/scanner.hpp"
 
     using std::move;
 

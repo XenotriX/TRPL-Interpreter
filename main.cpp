@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "parser.hxx"
-#include "repl.hpp"
-#include "interpreter.hpp"
+#include "repl/repl.hpp"
+#include "interpreter/interpreter.hpp"
 
 struct myParserOutput : ParserOutput
 {

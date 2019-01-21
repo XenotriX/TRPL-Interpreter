@@ -9,7 +9,7 @@ letter [a-zA-Z]
     #include <stdexcept>
     #include <cstdlib>
     #include "parser.hxx"
-    #include "scanner.hpp"
+    #include "parser/scanner.hpp"
 
     // utility macros to simplify the actions
     #define YIELD_TOKEN(tok, val, type)                 \
