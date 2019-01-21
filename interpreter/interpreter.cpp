@@ -58,8 +58,15 @@ Value Interpreter::eval(ast::Expression* expr)
 {
   switch(expr->dtype) {
     case ast::Identifier_t:
-      return eval(variables.at(static_cast<ast::Identifier*>(expr)->id));
+    {
+      std::string id = static_cast<ast::Identifier*>(expr)->id;
+      if (!variables.count(id)) {
+        log("No variable named " + id);
+        return Undefined();
+      }
+      return eval(variables.at(id));
       break;
+    }
     case ast::Undefined_t:
       break;
     case ast::Number_t:
