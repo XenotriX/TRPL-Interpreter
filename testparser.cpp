@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "parser.hxx"
+#include "repl.hpp"
 
 struct myParserOutput : ParserOutput
 {
@@ -17,15 +18,11 @@ struct myParserOutput : ParserOutput
   }
 };
 
-int main (int argc, char *argv[])
+void run(std::string input)
 {
   myParserOutput cb;
-  std::vector<std::string> lines = {
-    "var test\n",
-    "test = 5.3\n",
-    "print test, asdf, fr\n",
-    "var myVar = {\nkey: \"val\"\n}\n"
-  };
+  std::vector<std::string> lines;
+  lines.push_back(input);
   parse(lines, &cb);
   auto stmts = cb.getStatements();
   for (ast::Statement* stmt: stmts) {
@@ -77,5 +74,12 @@ int main (int argc, char *argv[])
         break;
     }
   }
+}
+
+int main (int argc, char *argv[])
+{
+  REPL repl;
+  repl.addEventListener(&run);
+  repl.start();
 }
 
