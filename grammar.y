@@ -1,5 +1,4 @@
 %skeleton "lalr1.cc"
-
 %require "3.2"
 
 %parse-param {yy::scanner* scanner} {ParserOutput* cb}
@@ -54,21 +53,139 @@
 
 %start program
 %token <std::string> IDENTIFIER
+%token ASSIG
+%token BECOMES
+%token <double> NUMBER
+%token PLUS
+%token MINUS
+%token TIMES
+%token DIVIDED
+%token LESS
+%token GREATER
+%token LESS_EQL
+%token GREATER_EQL
+%token <std::string> STRING
+%token RPARENT
+%token LPARENT
+%token RBRACE
+%token LBRACE
+%token RBRACKET
+%token LBRACKET
+%token COLON
 %token VARDEC
-%token UNKNOWN
+%token COMMA
+%token PRINT
+%token LOAD
+%token TYPEOF
+%token EXIT
 %token EOL
+%token PERIOD
+%token CONSTDEC
+%token EQUAL
+%token UNKNOWN
+%token FILE_END
+%type <ast::Identifier*> identifier
 %type <ast::VarDeclaration*> vardec
+%type <ast::Assignment*> assignment
 %type <ast::Statement*> statement
+%type <ast::Statement*> command
+%type <ast::PrintStatement*> print
+%type <ast::Expression*> literal
+%type <ast::Expression*> expression
+%type <std::vector<ast::Expression*>> list
+%type <ast::Property*> property
+%type <std::vector<ast::Property*>> properties
+%type <ast::ObjectLiteral*> object
 
 %%
 program    : statement          { cb->addStatement($1); }
            | statement program
            ;
 
-vardec     : VARDEC IDENTIFIER { $$ = new ast::VarDeclaration($2); }
+identifier : IDENTIFIER { $$ = new ast::Identifier($1); }
            ;
 
-statement  : vardec             { $$ = static_cast<ast::Statement*>($1); }
+expression : identifier { $$ = $1; }
+           | pattern
+           | literal { $$ = $1; }
+           | expression operator expression
+           ;
+
+pattern    : IDENTIFIER PERIOD IDENTIFIER
+           | IDENTIFIER PERIOD pattern
+           ;
+
+literal    : NUMBER { $$ = new ast::NumberLiteral($1); }
+           | STRING { $$ = new ast::StringLiteral($1); }
+           | array
+           | object { $$ = $1; }
+           ;
+
+property   : identifier COLON expression { $$ = new ast::Property($1, $3); }
+           ;
+
+properties : property                   { $$ = std::vector<ast::Property*>(); enlist($$, $1); }
+           | property COMMA properties  { $$ = enlist($3, $1); }
+           ;
+
+array      : LBRACKET list RBRACKET
+           ;
+
+object     : LBRACE properties RBRACE { $$ = new ast::ObjectLiteral($2); }
+           ;
+
+list       : expression             { $$ = std::vector<ast::Expression*>(); enlist($$, $1); }
+           | expression COMMA list  { $$ = enlist($3, $1); }
+           ;
+
+operator   : PLUS
+           | MINUS
+           | TIMES
+           | DIVIDED
+           | EQUAL
+           | LESS
+           | GREATER
+           | LESS_EQL
+           | GREATER_EQL
+           ;
+
+assig_op   : ASSIG
+           | BECOMES
+           ;
+
+assignment : identifier assig_op expression          { $$ = new ast::Assignment($1, $3); }
+           ;
+
+vardec     : VARDEC identifier { $$ = new ast::VarDeclaration($2); }
+           | VARDEC identifier assig_op expression { $$ = new ast::VarDeclaration($2, $4); }
+           ;
+
+constdec   : CONSTDEC identifier assig_op expression
+           ;
+
+statement  : vardec                  { $$ = static_cast<ast::Statement*>($1); }
+           | assignment              { $$ = static_cast<ast::Statement*>($1); }
+           | constdec
+           | command
+           | statement
+           ;
+
+command    : print             { $$ = static_cast<ast::Statement*>($1); }
+           | exit
+           | load
+           | typeof
+           ;
+
+print      : PRINT list { $$ = new ast::PrintStatement($2); }
+           ;
+
+exit       : EXIT
+           ;
+
+load       : LOAD STRING
+           ;
+
+typeof     : TYPEOF expression
            ;
 
 %%

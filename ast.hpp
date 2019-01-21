@@ -1,20 +1,97 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <map>
 
 namespace ast
 {
-  // Statements
-  struct Statement
-  {
+  enum Type {
+    PrintStatement_t,
+    VarDeclaration_t,
+    Assignment_t,
   };
 
-  struct VarDeclaration : public Statement
+  enum DataType {
+    Identifier_t,
+    Undefined_t,
+    Number_t,
+    String_t,
+    Object_t,
+    Array_t,
+  };
+
+  struct Statement
   {
-    VarDeclaration() = default;
-    VarDeclaration(const std::string&);
-    VarDeclaration(const std::string&, const std::string&);
-    std::string name;
-    std::string init;
+    Statement(const Type&);
+    Type type;
+  };
+
+  struct Expression
+  {
+    DataType dtype;
+    Expression(const DataType&);
+  };
+
+  struct Undefined : Expression
+  {
+    Undefined();
+  };
+
+  struct Identifier : Expression
+  {
+    Identifier(const std::string);
+    std::string id;
+  };
+
+  struct PrintStatement : Statement
+  {
+    PrintStatement(std::vector<Expression*>);
+    std::vector<Expression*> list;
+  };
+
+  struct VarDeclaration : Statement
+  {
+    VarDeclaration(Identifier*);
+    VarDeclaration(Identifier*, Expression*);
+    Identifier* name;
+    Expression* init;
+  };
+
+  struct Property
+  {
+    Property(Identifier*, Expression*);
+    Identifier* key;
+    Expression* value;
+  };
+
+  struct Assignment : Statement
+  {
+    Assignment(Identifier*, Expression*);
+    Identifier* name;
+    Expression* value;
+  };
+
+  struct NumberLiteral : Expression
+  {
+    NumberLiteral(const double);
+    double value;
+  };
+
+  struct StringLiteral : Expression
+  {
+    StringLiteral(const std::string);
+    std::string value;
+  };
+
+  struct ArrayLiteral : Expression
+  {
+    std::vector<Expression> values;
+  };
+
+  struct ObjectLiteral : Expression
+  {
+    ObjectLiteral(std::vector<Property*>);
+    std::vector<Property*> properties;
   };
 }
