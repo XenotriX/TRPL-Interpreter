@@ -9,6 +9,12 @@ Statement::Statement(const Type& type) :
 
 }
 
+Branch::Branch(Expression* condition, Statement* consequence) :
+  Statement(Branch_t), condition(condition), consequence(consequence)
+{
+
+}
+
 Operation::Operation(const DataType& type, Expression* left, Expression* right) :
   Expression(type), left(left), right(right)
 {
@@ -95,6 +101,12 @@ NumberLiteral::NumberLiteral(const double value) :
 
 StringLiteral::StringLiteral(const std::string value) :
   value(value), Expression(String_t)
+{
+
+}
+
+BooleanLiteral::BooleanLiteral(const bool value) :
+  value(value), Expression(Boolean_t)
 {
 
 }

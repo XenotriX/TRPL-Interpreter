@@ -84,6 +84,9 @@
 %token EQUAL
 %token UNKNOWN
 %token FILE_END
+%token IF
+%token TRUE
+%token FALSE
 %type <ast::Identifier*> identifier
 %type <ast::VarDeclaration*> vardec
 %type <ast::Assignment*> assignment
@@ -96,6 +99,8 @@
 %type <ast::Property*> property
 %type <std::vector<ast::Property*>> properties
 %type <ast::ObjectLiteral*> object
+%type <ast::Branch*> branch
+%type <ast::BooleanLiteral*> boolean
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -120,8 +125,13 @@ pattern    : IDENTIFIER PERIOD IDENTIFIER
 
 literal    : NUMBER { $$ = new ast::NumberLiteral($1); }
            | STRING { $$ = new ast::StringLiteral($1); }
+           | boolean { $$ = $1; }
            | array
            | object { $$ = $1; }
+           ;
+
+boolean    : TRUE  { $$ = new ast::BooleanLiteral(true); }
+           | FALSE { $$ = new ast::BooleanLiteral(false); }
            ;
 
 property   : identifier COLON expression { $$ = new ast::Property($1, $3); }
@@ -145,6 +155,9 @@ assig_op   : ASSIG
            | BECOMES
            ;
 
+branch     : IF LPARENT expression RPARENT statement { $$ = new ast::Branch($3, $5); }
+           ;
+
 assignment : identifier assig_op expression          { $$ = new ast::Assignment($1, $3); }
            ;
 
@@ -155,11 +168,11 @@ vardec     : VARDEC identifier { $$ = new ast::VarDeclaration($2); }
 constdec   : CONSTDEC identifier assig_op expression
            ;
 
-statement  : vardec                  { $$ = static_cast<ast::Statement*>($1); }
-           | assignment              { $$ = static_cast<ast::Statement*>($1); }
+statement  : vardec                  { $$ = $1; }
+           | assignment              { $$ = $1; }
+           | branch                  { $$ = $1; }
            | constdec
            | command
-           | statement
            ;
 
 command    : print             { $$ = static_cast<ast::Statement*>($1); }

@@ -55,12 +55,15 @@ letter [a-zA-Z]
 "<="                          return yy::parser::token::LESS_EQL;
 ">="                          return yy::parser::token::GREATER_EQL;
 ":"                           return yy::parser::token::COLON;
+"true"                        return yy::parser::token::TRUE;
+"false"                       return yy::parser::token::FALSE;
 "var"                         return yy::parser::token::VARDEC;
 "const"                       return yy::parser::token::CONSTDEC;
 "print"                       return yy::parser::token::PRINT;
 "load"                        return yy::parser::token::LOAD;
 "typeOf"                      return yy::parser::token::TYPEOF;
 "exit"                        return yy::parser::token::EXIT;
+"if"                          return yy::parser::token::IF;
 {letter}({letter}|{digit})*   STR_TOKEN(yy::parser::token::IDENTIFIER);
 {digit}*("."{digit}*)?        NUM_TOKEN(yy::parser::token::NUMBER);
 \".*\"                        return yy::parser::token::STRING;

@@ -20,6 +20,7 @@ typedef std::variant<
 class Interpreter
 {
 public:
+  void exec(ast::Statement*);
   void exec(std::vector<ast::Statement*>);
   void addEventListener(std::function<void (std::string)>);
 private:

@@ -10,6 +10,7 @@ namespace ast
     PrintStatement_t,
     VarDeclaration_t,
     Assignment_t,
+    Branch_t,
   };
 
   enum DataType {
@@ -17,6 +18,7 @@ namespace ast
     Undefined_t,
     Number_t,
     String_t,
+    Boolean_t,
     Object_t,
     Array_t,
     Addition_t,
@@ -35,6 +37,13 @@ namespace ast
   {
     DataType dtype;
     Expression(const DataType&);
+  };
+
+  struct Branch : Statement
+  {
+    Branch(Expression*, Statement*);
+    Expression* condition;
+    Statement* consequence;
   };
 
   struct Operation : Expression
@@ -113,6 +122,12 @@ namespace ast
   {
     StringLiteral(const std::string);
     std::string value;
+  };
+
+  struct BooleanLiteral : Expression
+  {
+    BooleanLiteral(const bool);
+    bool value;
   };
 
   struct ArrayLiteral : Expression
