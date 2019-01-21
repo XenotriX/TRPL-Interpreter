@@ -1,7 +1,7 @@
-#include <iostream>
 #include "./interpreter.hpp"
+#include <iostream>
 
-void Interpreter::eval(std::vector<ast::Statement*> stmts)
+void Interpreter::exec(std::vector<ast::Statement*> stmts)
 {
   for (ast::Statement* stmt: stmts) {
     switch(stmt->type) {
@@ -48,3 +48,68 @@ void Interpreter::log(std::string output)
   for (auto listener: listeners)
     listener(output);
 }
+
+Value Interpreter::eval(ast::Expression* expr)
+{
+  switch(expr->dtype) {
+    case ast::Identifier_t:
+      break;
+    case ast::Undefined_t:
+      break;
+    case ast::Number_t:
+      return static_cast<ast::NumberLiteral*>(expr)->value;
+      break;
+    case ast::String_t:
+      return static_cast<ast::StringLiteral*>(expr)->value;
+      break;
+    case ast::Object_t:
+      break;
+    case ast::Array_t:
+      break;
+    case ast::Addition_t:
+    {
+      ast::Addition* addition = static_cast<ast::Addition*>(expr);
+      Value left  = eval(addition->left);
+      Value right = eval(addition->right);
+      if (!std::holds_alternative<double>(left) ||
+          !std::holds_alternative<double>(right))
+        return Undefined();
+      return std::get<double>(left) +  std::get<double>(right);
+      break;
+    }
+    case ast::Substraction_t:
+    {
+      ast::Substraction* substraction = static_cast<ast::Substraction*>(expr);
+      Value left  = eval(substraction->left);
+      Value right = eval(substraction->right);
+      if (!std::holds_alternative<double>(left) ||
+          !std::holds_alternative<double>(right))
+        return Undefined();
+      return std::get<double>(left) -  std::get<double>(right);
+      break;
+    }
+    case ast::Multiplication_t:
+    {
+      ast::Multiplication* multiplication = static_cast<ast::Multiplication*>(expr);
+      Value left  = eval(multiplication->left);
+      Value right = eval(multiplication->right);
+      if (!std::holds_alternative<double>(left) ||
+          !std::holds_alternative<double>(right))
+        return Undefined();
+      return std::get<double>(left) *  std::get<double>(right);
+      break;
+    }
+    case ast::Division_t:
+    {
+      ast::Division* division = static_cast<ast::Division*>(expr);
+      Value left  = eval(division->left);
+      Value right = eval(division->right);
+      if (!std::holds_alternative<double>(left) ||
+          !std::holds_alternative<double>(right))
+        return Undefined();
+      return std::get<double>(left) /  std::get<double>(right);
+      break;
+    }
+  }
+}
+

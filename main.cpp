@@ -31,7 +31,7 @@ int main (int argc, char *argv[])
     lines.push_back(input);
     parse(lines, &cb);
     auto stmts = cb.getStatements();
-    interpreter.eval(stmts);
+    interpreter.exec(stmts);
   });
 
   repl.start();

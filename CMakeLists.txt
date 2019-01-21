@@ -4,6 +4,7 @@ add_executable(TRPL
                main.cpp
                ast.cpp
                )
+set_target_properties(TRPL PROPERTIES CXX_STANDARD 17)
 
 find_package(BISON)
 find_package(FLEX)
@@ -18,6 +19,7 @@ add_library(parserlib ${BISON_Parser_OUTPUTS})
 add_library(scannerlib ${FLEX_Scanner_OUTPUTS})
 add_library(interpreter interpreter/interpreter.cpp)
 add_library(repl repl/repl.cpp)
+set_target_properties(interpreter PROPERTIES CXX_STANDARD 17)
 
 target_link_libraries(TRPL parserlib)
 target_link_libraries(TRPL scannerlib)
