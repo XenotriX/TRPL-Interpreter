@@ -19,6 +19,10 @@ namespace ast
     String_t,
     Object_t,
     Array_t,
+    Addition_t,
+    Substraction_t,
+    Multiplication_t,
+    Division_t
   };
 
   struct Statement
@@ -31,6 +35,33 @@ namespace ast
   {
     DataType dtype;
     Expression(const DataType&);
+  };
+
+  struct Operation : Expression
+  {
+    Operation(const DataType&, Expression*, Expression*);
+    Expression* left;
+    Expression* right;
+  };
+
+  struct Addition : Operation
+  {
+    Addition(Expression*, Expression*);
+  };
+
+  struct Substraction : Operation
+  {
+    Substraction(Expression*, Expression*);
+  };
+
+  struct Multiplication : Operation
+  {
+    Multiplication(Expression*, Expression*);
+  };
+
+  struct Division : Operation
+  {
+    Division(Expression*, Expression*);
   };
 
   struct Undefined : Expression

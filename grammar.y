@@ -108,7 +108,10 @@ identifier : IDENTIFIER { $$ = new ast::Identifier($1); }
 expression : identifier { $$ = $1; }
            | pattern
            | literal { $$ = $1; }
-           | expression operator expression
+           | expression expression PLUS { $$ = new ast::Addition($1, $2); }
+           | expression expression MINUS { $$ = new ast::Substraction($1, $2); }
+           | expression expression TIMES { $$ = new ast::Multiplication($1, $2); }
+           | expression expression DIVIDED { $$ = new ast::Division($1, $2); }
            ;
 
 pattern    : IDENTIFIER PERIOD IDENTIFIER
@@ -136,17 +139,6 @@ object     : LBRACE properties RBRACE { $$ = new ast::ObjectLiteral($2); }
 
 list       : expression             { $$ = std::vector<ast::Expression*>(); enlist($$, $1); }
            | expression COMMA list  { $$ = enlist($3, $1); }
-           ;
-
-operator   : PLUS
-           | MINUS
-           | TIMES
-           | DIVIDED
-           | EQUAL
-           | LESS
-           | GREATER
-           | LESS_EQL
-           | GREATER_EQL
            ;
 
 assig_op   : ASSIG

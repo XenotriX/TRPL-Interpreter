@@ -9,6 +9,36 @@ Statement::Statement(const Type& type) :
 
 }
 
+Operation::Operation(const DataType& type, Expression* left, Expression* right) :
+  Expression(type), left(left), right(right)
+{
+
+}
+
+Addition::Addition(Expression* left, Expression* right) :
+  Operation(Addition_t, left, right)
+{
+
+}
+
+Substraction::Substraction(Expression* left, Expression* right) :
+  Operation(Substraction_t, left, right)
+{
+
+}
+
+Multiplication::Multiplication(Expression* left, Expression* right) :
+  Operation(Multiplication_t, left, right)
+{
+
+}
+
+Division::Division(Expression* left, Expression* right) :
+  Operation(Division_t, left, right)
+{
+
+}
+
 Undefined::Undefined() :
   Expression(Undefined_t)
 {

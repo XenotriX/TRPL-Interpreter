@@ -9,6 +9,8 @@ void Interpreter::eval(std::vector<ast::Statement*> stmts)
       {
         auto var = static_cast<ast::VarDeclaration*>(stmt);
         variables.insert({var->name->id, var->init});
+        log(var->name->id + " " + std::to_string(var->init->dtype));
+        log(std::to_string(static_cast<ast::NumberLiteral*>(var->init)->value));
         break;
       }
       case ast::Assignment_t:
