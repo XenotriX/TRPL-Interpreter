@@ -33,6 +33,7 @@ void Interpreter::exec(std::vector<ast::Statement*> stmts)
           Value val = eval(expr);
           if (std::holds_alternative<double>(val)) log(std::to_string(std::get<double>(val)));
           else if (std::holds_alternative<std::string>(val)) log(std::get<std::string>(val));
+          else if (std::holds_alternative<Undefined>(val)) log("Undefined");
         }
         break;
       }
@@ -68,6 +69,7 @@ Value Interpreter::eval(ast::Expression* expr)
       break;
     }
     case ast::Undefined_t:
+      return Undefined();
       break;
     case ast::Number_t:
       return static_cast<ast::NumberLiteral*>(expr)->value;
