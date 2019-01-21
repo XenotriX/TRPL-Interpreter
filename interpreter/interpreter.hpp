@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <variant>
+#include "../repl/repl.hpp"
 
 class Undefined {};
 
@@ -22,10 +23,10 @@ class Interpreter
 public:
   void exec(ast::Statement*);
   void exec(std::vector<ast::Statement*>);
-  void addEventListener(std::function<void (std::string)>);
+  void addEventListener(std::function<void (LogLevel, std::string)>);
 private:
-  void log(std::string);
-  std::vector<std::function<void (std::string)>> listeners;
+  void log(LogLevel, std::string);
+  std::vector<std::function<void (LogLevel, std::string)>> listeners;
   std::map<std::string, ast::Expression*> variables;
   Value eval(ast::Expression*);
 };

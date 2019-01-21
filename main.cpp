@@ -24,7 +24,7 @@ int main (int argc, char *argv[])
   Interpreter interpreter;
   REPL repl;
 
-  interpreter.addEventListener([&repl](std::string input){repl.print(input);});
+  interpreter.addEventListener([&repl](LogLevel level, std::string input){repl.print(level, input);});
   repl.addEventListener([&interpreter](std::string input) {
     myParserOutput cb;
     std::vector<std::string> lines;

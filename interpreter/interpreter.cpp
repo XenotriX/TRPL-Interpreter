@@ -15,7 +15,7 @@ void Interpreter::exec(ast::Statement* stmt)
     {
       auto var = static_cast<ast::VarDeclaration*>(stmt);
       if (variables.count(var->name->id)) {
-        log(var->name->id + " already exists.");
+        log(Error, var->name->id + " already exists.");
         return;
       }
       variables.insert({var->name->id, var->init});
@@ -25,7 +25,7 @@ void Interpreter::exec(ast::Statement* stmt)
     {
       auto assig = static_cast<ast::Assignment*>(stmt);
       if (!variables.count(assig->name->id)) {
-        log("No variable named " + assig->name->id);
+        log(Error, "No variable named " + assig->name->id);
         return;
       }
       variables.at(assig->name->id) = assig->value;
@@ -37,9 +37,9 @@ void Interpreter::exec(ast::Statement* stmt)
       std::vector<ast::Expression*> list = print->list;
       for (auto expr: list) {
         Value val = eval(expr);
-        if (std::holds_alternative<double>(val)) log(std::to_string(std::get<double>(val)));
-        else if (std::holds_alternative<std::string>(val)) log(std::get<std::string>(val));
-        else if (std::holds_alternative<Undefined>(val)) log("Undefined");
+        if (std::holds_alternative<double>(val)) log(Info, std::to_string(std::get<double>(val)));
+        else if (std::holds_alternative<std::string>(val)) log(Info, std::get<std::string>(val));
+        else if (std::holds_alternative<Undefined>(val)) log(Info, "Undefined");
       }
       break;
     }
@@ -48,7 +48,7 @@ void Interpreter::exec(ast::Statement* stmt)
       auto branch = static_cast<ast::Branch*>(stmt);
       Value condition = eval(branch->condition);
       if (!std::holds_alternative<bool>(condition)) {
-        log("Condition is not of type Boolean.");
+        log(Error, "Condition is not of type Boolean.");
         break;
       }
       if (std::get<bool>(condition)){
@@ -62,15 +62,15 @@ void Interpreter::exec(ast::Statement* stmt)
   }
 }
 
-void Interpreter::addEventListener(std::function<void (std::string)> callback)
+void Interpreter::addEventListener(std::function<void (LogLevel, std::string)> callback)
 {
   listeners.push_back(callback);
 }
 
-void Interpreter::log(std::string output)
+void Interpreter::log(LogLevel level, std::string output)
 {
   for (auto listener: listeners)
-    listener(output);
+    listener(level, output);
 }
 
 Value Interpreter::eval(ast::Expression* expr)
@@ -80,7 +80,7 @@ Value Interpreter::eval(ast::Expression* expr)
     {
       std::string id = static_cast<ast::Identifier*>(expr)->id;
       if (!variables.count(id)) {
-        log("No variable named " + id);
+        log(Error, "No variable named " + id);
         return Undefined();
       }
       return eval(variables.at(id));

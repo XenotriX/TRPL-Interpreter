@@ -19,9 +19,19 @@ void REPL::addEventListener(std::function<void (std::string)> callback)
   listeners.push_back(callback);
 }
 
-void REPL::print(std::string output)
+void REPL::print(LogLevel level, std::string output)
 {
-  std::cout << "=> " << output << std::endl;
+  switch(level) {
+    case Info:
+      std::cout << "=> " << output << std::endl;
+      break;
+    case Warning:
+      std::cout << "!> " << output << std::endl;
+      break;
+    case Error:
+      std::cout << "x> " << output << std::endl;
+      break;
+  }
 }
 
 void REPL::dispatchEvent(std::string input)
