@@ -1,9 +1,10 @@
 cmake_minimum_required (VERSION 3.10)
 project (TRPL)
 add_executable(TRPL
-               testparser.cpp
+               main.cpp
                ast.cpp
-               repl.cpp)
+               repl.cpp
+               interpreter.cpp)
 
 find_package(BISON)
 find_package(FLEX)

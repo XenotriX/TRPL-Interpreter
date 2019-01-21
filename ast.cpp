@@ -6,7 +6,7 @@ using namespace ast;
 Statement::Statement(const Type& type) :
   type(type)
 {
-  std::cout << "creating statement of type: " << type << std::endl;
+
 }
 
 Undefined::Undefined() :

@@ -1,6 +1,5 @@
 #include "repl.hpp"
-
-#include <iostream>
+#include <iostream> 
 
 void REPL::start()
 {
@@ -15,7 +14,7 @@ void REPL::start()
   }
 }
 
-void REPL::addEventListener(void (*callback)(std::string))
+void REPL::addEventListener(std::function<void (std::string)> callback)
 {
   listeners.push_back(callback);
 }
