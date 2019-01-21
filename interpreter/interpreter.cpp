@@ -8,17 +8,21 @@ void Interpreter::exec(std::vector<ast::Statement*> stmts)
       case ast::VarDeclaration_t:
       {
         auto var = static_cast<ast::VarDeclaration*>(stmt);
+        if (variables.count(var->name->id)) {
+          log(var->name->id + " already exists.");
+          return;
+        }
         variables.insert({var->name->id, var->init});
-        log(var->name->id + " " + std::to_string(var->init->dtype));
-        log(std::to_string(static_cast<ast::NumberLiteral*>(var->init)->value));
         break;
       }
       case ast::Assignment_t:
       {
         auto assig = static_cast<ast::Assignment*>(stmt);
-        std::cout << "Assignement" << std::endl;
-        std::cout << "->Left: " << static_cast<ast::Identifier*>(assig->name)->id << std::endl;
-        std::cout << "->Right: " << static_cast<ast::NumberLiteral*>(assig->value)->value << std::endl;
+        if (!variables.count(assig->name->id)) {
+          log("No variable named " + assig->name->id);
+          return;
+        }
+        variables.at(assig->name->id) = assig->value;
         break;
       }
       case ast::PrintStatement_t:
