@@ -4,17 +4,19 @@
 void REPL::start()
 {
   isRunning = true;
-  needsMore = false;
+  indent = 0;
 
   std::string buffer;
   std::string input;
 
   while (isRunning) {
-    if (needsMore) {
-      std::cout << ".... ";
+    if (indent > 0) {
+      for (int i = 0; i < indent; i++)
+        std::cout << "--";
+      std::cout << ">> ";
       std::getline(std::cin, input);
       buffer += input;
-      needsMore = false;
+      indent--;
     } else {
       std::cout << ">> ";
       std::getline(std::cin, buffer);
@@ -43,9 +45,9 @@ void REPL::print(LogLevel level, std::string output)
   }
 }
 
-void REPL::requestMore()
+void REPL::setIndent(int indent)
 {
-  needsMore = true;
+  this->indent = indent;
 };
 
 void REPL::dispatchEvent(std::string input)

@@ -16,11 +16,11 @@ public:
   void start();
   void addEventListener(std::function<void (std::string)> callback);
   void print(LogLevel, std::string);
-  void requestMore();
+  void setIndent(int);
 private:
   void dispatchEvent(std::string);
   std::vector<std::function<void (std::string)>> listeners;
   bool isRunning;
-  bool needsMore;
+  int indent;
 };
 

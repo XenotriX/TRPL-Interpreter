@@ -12,15 +12,13 @@ int main (int argc, char *argv[])
   REPL repl;
   Parser parser;
 
+  parser.addEventListener([&repl](int indent) {
+    repl.setIndent(indent);
+  });
   interpreter.addEventListener([&repl](LogLevel level, std::string input){repl.print(level, input);});
   repl.addEventListener([&interpreter, &parser, &repl](std::string input) {
-    try {
-      std::vector<ast::Statement*> stmts = parser.parse(input);
-      interpreter.exec(stmts);
-    }
-    catch (ExpectMore e) {
-      repl.requestMore();
-    };
+    std::vector<ast::Statement*> stmts = parser.parse(input);
+    interpreter.exec(stmts);
   });
 
   repl.start();

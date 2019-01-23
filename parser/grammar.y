@@ -23,6 +23,7 @@
   };
 
   struct ParserOutput {
+    int indent = 0;
     virtual void addStatement(ast::Statement*) = 0;
   };
 } 
@@ -46,8 +47,6 @@
         t.push_back(move(v));
         return move(t);
     }
-
-  struct ExpectMore {};
 }
 
 %start program
@@ -158,12 +157,12 @@ assig_op   : ASSIG
 
 branch     : IF LPARENT expression RPARENT statement { $$ = new ast::Branch($3, $5); }
            | IF LPARENT expression RPARENT scope     { $$ = new ast::Branch($3, $5); }
-           | IF LPARENT expression RPARENT           { throw ExpectMore(); }
+           | IF LPARENT expression RPARENT           { cb->indent++; }
            ;
 
 scope      : LBRACE statements RBRACE                { $$ = $2; }
-           | LBRACE statements                       { throw ExpectMore(); }
-           | LBRACE                                  { throw ExpectMore(); }
+           | LBRACE statements                       { cb->indent++; }
+           | LBRACE                                  { cb->indent++; }
            ;
 
 assignment : identifier assig_op expression          { $$ = new ast::Assignment($1, $3); }
