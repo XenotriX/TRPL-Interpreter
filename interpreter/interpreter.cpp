@@ -39,6 +39,7 @@ void Interpreter::exec(ast::Statement* stmt)
         Value val = eval(expr);
         if (std::holds_alternative<double>(val)) log(Info, std::to_string(std::get<double>(val)));
         else if (std::holds_alternative<std::string>(val)) log(Info, std::get<std::string>(val));
+        else if (std::holds_alternative<bool>(val)) log(Info, std::get<bool>(val) ? "true" : "false");
         else if (std::holds_alternative<Undefined>(val)) log(Info, "Undefined");
       }
       break;
