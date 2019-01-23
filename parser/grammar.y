@@ -46,6 +46,8 @@
         t.push_back(move(v));
         return move(t);
     }
+
+  struct ExpectMore {};
 }
 
 %start program
@@ -98,6 +100,8 @@
 %type <ast::ObjectLiteral*> object
 %type <ast::Branch*> branch
 %type <ast::BooleanLiteral*> boolean
+%type <std::vector<ast::Statement*>> scope
+%type <std::vector<ast::Statement*>> statements
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -153,6 +157,13 @@ assig_op   : ASSIG
            ;
 
 branch     : IF LPARENT expression RPARENT statement { $$ = new ast::Branch($3, $5); }
+           | IF LPARENT expression RPARENT scope     { $$ = new ast::Branch($3, $5); }
+           | IF LPARENT expression RPARENT           { throw ExpectMore(); }
+           ;
+
+scope      : LBRACE statements RBRACE                { $$ = $2; }
+           | LBRACE statements                       { throw ExpectMore(); }
+           | LBRACE                                  { throw ExpectMore(); }
            ;
 
 assignment : identifier assig_op expression          { $$ = new ast::Assignment($1, $3); }
@@ -170,6 +181,10 @@ statement  : vardec                  { $$ = $1; }
            | branch                  { $$ = $1; }
            | constdec
            | command
+           ;
+
+statements : statement            { $$ = std::vector<ast::Statement*>(); enlist($$, $1); }
+           | statements statement { $$ = enlist($1, $2); }
            ;
 
 command    : print             { $$ = static_cast<ast::Statement*>($1); }

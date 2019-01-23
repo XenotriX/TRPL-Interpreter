@@ -10,6 +10,12 @@ Statement::Statement(const Type& type) :
 }
 
 Branch::Branch(Expression* condition, Statement* consequence) :
+  Statement(Branch_t), condition(condition)
+{
+  this->consequence.push_back(consequence);
+}
+
+Branch::Branch(Expression* condition, std::vector<Statement*> consequence) :
   Statement(Branch_t), condition(condition), consequence(consequence)
 {
 

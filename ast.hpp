@@ -42,8 +42,9 @@ namespace ast
   struct Branch : Statement
   {
     Branch(Expression*, Statement*);
+    Branch(Expression*, std::vector<Statement*>);
     Expression* condition;
-    Statement* consequence;
+    std::vector<Statement*> consequence;
   };
 
   struct Operation : Expression

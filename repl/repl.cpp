@@ -4,13 +4,22 @@
 void REPL::start()
 {
   isRunning = true;
+  needsMore = false;
 
+  std::string buffer;
   std::string input;
 
   while (isRunning) {
-    std::cout << ">> ";
-    std::getline(std::cin, input);
-    dispatchEvent(input);
+    if (needsMore) {
+      std::cout << ".... ";
+      std::getline(std::cin, input);
+      buffer += input;
+      needsMore = false;
+    } else {
+      std::cout << ">> ";
+      std::getline(std::cin, buffer);
+    }
+    dispatchEvent(buffer);
   }
 }
 
@@ -33,6 +42,11 @@ void REPL::print(LogLevel level, std::string output)
       break;
   }
 }
+
+void REPL::requestMore()
+{
+  needsMore = true;
+};
 
 void REPL::dispatchEvent(std::string input)
 {
