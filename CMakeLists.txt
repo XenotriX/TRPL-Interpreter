@@ -15,7 +15,7 @@ BISON_TARGET(Parser parser/grammar.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cxx)
 FLEX_TARGET(Scanner parser/scanner.l ${CMAKE_CURRENT_BINARY_DIR}/scanner.cxx)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
-add_library(parserlib ${BISON_Parser_OUTPUTS})
+add_library(parserlib parser/parser.cpp ${BISON_Parser_OUTPUTS})
 add_library(scannerlib ${FLEX_Scanner_OUTPUTS})
 add_library(interpreter interpreter/interpreter.cpp)
 add_library(repl repl/repl.cpp)
