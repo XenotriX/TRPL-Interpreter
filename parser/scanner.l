@@ -55,6 +55,7 @@ letter [a-zA-Z]
 "<="                          return yy::parser::token::LESS_EQL;
 ">="                          return yy::parser::token::GREATER_EQL;
 ":"                           return yy::parser::token::COLON;
+"->"                          return yy::parser::token::ARROW;
 "true"                        return yy::parser::token::TRUE;
 "false"                       return yy::parser::token::FALSE;
 "var"                         return yy::parser::token::VARDEC;

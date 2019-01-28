@@ -1,15 +1,15 @@
 #include "./interpreter.hpp"
 #include <iostream>
 #include <cmath>
+#include <stdexcept>
 
-
-void Interpreter::exec(std::vector<ast::Statement*> stmts)
+void Interpreter::exec(std::vector<ast::Statement*> stmts) const
 {
   for (ast::Statement* stmt: stmts)
     exec(stmt);
 }
 
-void Interpreter::exec(ast::Statement* stmt)
+void Interpreter::exec(ast::Statement* stmt) const
 {
   switch(stmt->type) {
     case ast::VarDeclaration_t:
@@ -216,7 +216,28 @@ Value Interpreter::eval(ast::Expression* expr) const
       if (!std::holds_alternative<double>(left) ||
           !std::holds_alternative<double>(right))
         return Undefined();
-      return std::get<double>(left) /  std::get<double>(right);
+      return std::get<double>(left) / std::get<double>(right);
+      break;
+    }
+    case ast::Function_t:
+    {
+      auto funcLiteral = static_cast<ast::FunctionLiteral*>(expr);
+      return *funcLiteral;
+      break;
+    }
+    case ast::Call_t:
+    {
+      auto call = static_cast<ast::CallStatement*>(expr);
+      auto function = std::get<ast::FunctionLiteral>(eval(call->function));
+      auto args = call->args;
+      auto params = function.params;
+      if (params.size() != args.size())
+        throw std::invalid_argument("Parameters and arguments don't match");
+      storage.NewFrame();
+      for (int i = 0; i < params.size(); i++)
+        storage.Put(params[i]->id, args[i]);
+      exec(function.body);
+      storage.PopFrame();
       break;
     }
     default:

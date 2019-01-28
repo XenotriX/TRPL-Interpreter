@@ -85,6 +85,7 @@
 %token IF
 %token TRUE
 %token FALSE
+%token ARROW
 %type <ast::Identifier*> identifier
 %type <ast::VarDeclaration*> vardec
 %type <ast::Assignment*> assignment
@@ -104,6 +105,9 @@
 %type <ast::ArrayLiteral*> array
 %type <ast::Pattern*> pattern
 %type <ast::ExitStatement*> exit
+%type <std::vector<ast::Identifier*>> param
+%type <ast::FunctionLiteral*> function
+%type <ast::CallStatement*> func_call
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -122,6 +126,7 @@ pattern    : pattern PERIOD identifier               { $$ = new ast::Pattern($1,
 expression : identifier { $$ = $1; }
            | literal { $$ = $1; }
            | pattern                       { $$ = $1; }
+           | func_call { $$ = $1; }
            | expression expression PLUS { $$ = new ast::Addition($1, $2); }
            | expression expression MINUS { $$ = new ast::Substraction($1, $2); }
            | expression expression TIMES { $$ = new ast::Multiplication($1, $2); }
@@ -133,6 +138,7 @@ literal    : NUMBER { $$ = new ast::NumberLiteral($1); }
            | boolean { $$ = $1; }
            | array   { $$ = $1; }
            | object { $$ = $1; }
+           | function { $$ = $1; }
            ;
 
 boolean    : TRUE  { $$ = new ast::BooleanLiteral(true); }
@@ -154,6 +160,16 @@ object     : LBRACE properties RBRACE { $$ = new ast::ObjectLiteral($2); }
 
 list       : expression             { $$ = std::vector<ast::Expression*>(); enlist($$, $1); }
            | list COMMA expression  { $$ = enlist($1, $3); }
+           ;
+
+param      : identifier             { $$ = std::vector<ast::Identifier*>(); enlist($$, $1); }
+           | param COMMA identifier { $$ = enlist($1, $3); }
+
+function   : LPARENT param RPARENT ARROW scope { $$ = new ast::FunctionLiteral($2, $5); }
+           | LPARENT param RPARENT ARROW       { cb->indent++; }
+           ;
+
+func_call  : identifier LPARENT list RPARENT { $$ = new ast::CallStatement($1, $3); }
            ;
 
 assig_op   : ASSIG

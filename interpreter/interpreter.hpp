@@ -16,20 +16,21 @@ typedef std::variant<
     bool,
     std::vector<ast::Expression*>,
     std::unordered_map<std::string, ast::Expression*>,
-    Undefined
+    Undefined,
+    ast::FunctionLiteral
   > Value;
 
 class Interpreter
 {
 public:
-  void exec(ast::Statement*);
-  void exec(std::vector<ast::Statement*>);
+  void exec(ast::Statement*) const;
+  void exec(std::vector<ast::Statement*>) const;
   void addEventListener(std::function<void (LogLevel, std::string)>);
 private:
   void log(LogLevel, std::string) const;
   std::string toString(const Value& value) const;
-  std::vector<std::function<void (LogLevel, std::string)>> listeners;
   Value eval(ast::Expression*) const;
-  Storage storage;
+  std::vector<std::function<void (LogLevel, std::string)>> listeners;
+  mutable Storage storage;
 };
 

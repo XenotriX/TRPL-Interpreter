@@ -141,3 +141,17 @@ ExitStatement::ExitStatement() :
 
 }
 
+using ParamList = std::vector<ast::Identifier*>;
+
+FunctionLiteral::FunctionLiteral(ParamList params, std::vector<ast::Statement*> body) :
+  params(params), body(body), Expression(Function_t)
+{
+
+}
+
+CallStatement::CallStatement(Identifier* function, std::vector<Expression*> args) :
+  function(function), args(args), Expression(Call_t)
+{
+
+}
+

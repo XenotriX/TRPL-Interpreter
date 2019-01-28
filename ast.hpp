@@ -27,7 +27,9 @@ namespace ast
     Substraction_t,
     Multiplication_t,
     Division_t,
-    Pattern_t
+    Pattern_t,
+    Function_t,
+    Call_t,
   };
 
   struct Statement
@@ -156,5 +158,21 @@ namespace ast
   struct ExitStatement : Statement
   {
     ExitStatement();
+  };
+
+  using ParamList = std::vector<ast::Identifier*>;
+
+  struct FunctionLiteral : Expression
+  {
+    FunctionLiteral(ParamList params, std::vector<Statement*> body);
+    ParamList params;
+    std::vector<Statement*> body;
+  };
+
+  struct CallStatement : Expression
+  {
+    CallStatement(Identifier* function, std::vector<Expression*> args);
+    Identifier* function;
+    std::vector<Expression*> args;
   };
 }
