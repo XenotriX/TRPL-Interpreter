@@ -14,7 +14,7 @@ typedef std::variant<
     std::string,
     bool,
     std::vector<ast::Expression*>,
-    std::vector<ast::Property*>,
+    std::unordered_map<std::string, ast::Expression*>,
     Undefined
   > Value;
 

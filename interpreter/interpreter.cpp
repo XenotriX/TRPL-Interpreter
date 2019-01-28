@@ -77,6 +77,21 @@ std::string Interpreter::toString(const Value& val) const
     str += " ]";
     return str;
   }
+  else if (std::holds_alternative<std::unordered_map<std::string, ast::Expression*>>(val)) {
+    auto dict = std::get<std::unordered_map<std::string, ast::Expression*>>(val);
+    std::string str = "{ ";
+    for (auto prop: dict) {
+      if (prop != *dict.begin())
+        str += ", ";
+      str += prop.first + ": " + toString(eval(prop.second));
+    }
+    str += " }";
+    return str;
+  }
+  else {
+    log(Warning, "Expression cannot be converted to a string");
+    return "";
+  }
 }
 
 void Interpreter::addEventListener(std::function<void (LogLevel, std::string)> callback)
@@ -107,8 +122,8 @@ Value Interpreter::eval(ast::Expression* expr) const
     {
       auto pattern = static_cast<ast::Pattern*>(expr);
       Value object = eval(pattern->object);
-      Value member = eval(pattern->member);
       if (std::holds_alternative<std::vector<ast::Expression*>>(object)) {
+        Value member = eval(pattern->member);
         if (!std::holds_alternative<double>(member)) {
           log(Error, "Index must be a number");
           return Undefined();
@@ -116,9 +131,11 @@ Value Interpreter::eval(ast::Expression* expr) const
         auto expression = std::get<std::vector<ast::Expression*>>(object);
         return eval(expression.at((int)std::get<double>(member)));
       }
-      else {
-        log(Error, "Cannot access \"" + toString(member) + "\" of \"" + toString(object) + "\"");
-        return Undefined();
+      else if (std::holds_alternative<std::unordered_map<std::string, ast::Expression*>>(object)) {
+        if (pattern->member->dtype != ast::Identifier_t)
+          return Undefined();
+        auto properties = std::get<std::unordered_map<std::string, ast::Expression*>>(object);
+        return eval(properties.at(static_cast<ast::Identifier*>(pattern->member)->id));
       }
       break;
     }
@@ -132,7 +149,15 @@ Value Interpreter::eval(ast::Expression* expr) const
       return static_cast<ast::BooleanLiteral*>(expr)->value;
       break;
     case ast::Object_t:
+    {
+      std::unordered_map<std::string, ast::Expression*> dict;
+      auto properties = static_cast<ast::ObjectLiteral*>(expr)->properties;
+      for (auto property: properties) {
+        dict.insert({property->key->id, property->value});
+      }
+      return dict;
       break;
+    }
     case ast::Array_t:
       return static_cast<ast::ArrayLiteral*>(expr)->values;
       break;

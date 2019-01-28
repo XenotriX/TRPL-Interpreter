@@ -112,8 +112,8 @@ program    : statement          { cb->addStatement($1); }
 identifier : IDENTIFIER { $$ = new ast::Identifier($1); }
            ;
 
-pattern    : pattern PERIOD identifier
-           | identifier PERIOD identifier
+pattern    : pattern PERIOD identifier               { $$ = new ast::Pattern($1, $3); }
+           | identifier PERIOD identifier            { $$ = new ast::Pattern($1, $3); }
            | pattern LBRACKET expression RBRACKET { $$ = new ast::Pattern($1, $3); }
            | identifier LBRACKET expression RBRACKET { $$ = new ast::Pattern($1, $3); }
            ;

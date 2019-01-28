@@ -141,13 +141,13 @@ namespace ast
 
   struct ArrayLiteral : Expression
   {
-    ArrayLiteral(const std::vector<Expression*> values);
+    ArrayLiteral(const std::vector<Expression*>& values);
     std::vector<Expression*> values;
   };
 
   struct ObjectLiteral : Expression
   {
-    ObjectLiteral(std::vector<Property*>);
+    ObjectLiteral(const std::vector<Property*>& properties);
     std::vector<Property*> properties;
   };
 }
