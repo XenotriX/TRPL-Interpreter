@@ -37,10 +37,7 @@ void Interpreter::exec(ast::Statement* stmt)
       std::vector<ast::Expression*> list = print->list;
       for (auto expr: list) {
         Value val = eval(expr);
-        if (std::holds_alternative<double>(val)) log(Info, std::to_string(std::get<double>(val)));
-        else if (std::holds_alternative<std::string>(val)) log(Info, std::get<std::string>(val));
-        else if (std::holds_alternative<bool>(val)) log(Info, std::get<bool>(val) ? "true" : "false");
-        else if (std::holds_alternative<Undefined>(val)) log(Info, "Undefined");
+        log(Info, toString(val));
       }
       break;
     }
@@ -63,18 +60,37 @@ void Interpreter::exec(ast::Statement* stmt)
   }
 }
 
+std::string Interpreter::toString(const Value& val) const
+{
+  if (std::holds_alternative<double>(val)) return std::to_string(std::get<double>(val));
+  else if (std::holds_alternative<std::string>(val)) return std::get<std::string>(val);
+  else if (std::holds_alternative<bool>(val)) return std::get<bool>(val) ? "true" : "false";
+  else if (std::holds_alternative<Undefined>(val)) return "Undefined";
+  else if (std::holds_alternative<std::vector<ast::Expression*>>(val)) {
+    auto array = std::get<std::vector<ast::Expression*>>(val);
+    std::string str = "[ ";
+    for (auto value: array) {
+      if (value != array.front())
+        str += ", ";
+      str += toString(eval(value));
+    }
+    str += " ]";
+    return str;
+  }
+}
+
 void Interpreter::addEventListener(std::function<void (LogLevel, std::string)> callback)
 {
   listeners.push_back(callback);
 }
 
-void Interpreter::log(LogLevel level, std::string output)
+void Interpreter::log(LogLevel level, std::string output) const
 {
   for (auto listener: listeners)
     listener(level, output);
 }
 
-Value Interpreter::eval(ast::Expression* expr)
+Value Interpreter::eval(ast::Expression* expr) const
 {
   switch(expr->dtype) {
     case ast::Identifier_t:
@@ -87,9 +103,6 @@ Value Interpreter::eval(ast::Expression* expr)
       return eval(variables.at(id));
       break;
     }
-    case ast::Undefined_t:
-      return Undefined();
-      break;
     case ast::Number_t:
       return static_cast<ast::NumberLiteral*>(expr)->value;
       break;
@@ -102,6 +115,7 @@ Value Interpreter::eval(ast::Expression* expr)
     case ast::Object_t:
       break;
     case ast::Array_t:
+      return static_cast<ast::ArrayLiteral*>(expr)->values;
       break;
     case ast::Addition_t:
     {
@@ -147,6 +161,11 @@ Value Interpreter::eval(ast::Expression* expr)
       return std::get<double>(left) /  std::get<double>(right);
       break;
     }
+    default:
+    case ast::Undefined_t:
+      return Undefined();
+      break;
   }
+  return Undefined();
 }
 

@@ -117,6 +117,12 @@ BooleanLiteral::BooleanLiteral(const bool value) :
 
 }
 
+ArrayLiteral::ArrayLiteral(const std::vector<Expression*> values) :
+  values(values), Expression(Array_t)
+{
+
+}
+
 ObjectLiteral::ObjectLiteral(std::vector<Property*> properties) :
   properties(properties), Expression(Object_t)
 {

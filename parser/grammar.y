@@ -101,6 +101,7 @@
 %type <ast::BooleanLiteral*> boolean
 %type <std::vector<ast::Statement*>> scope
 %type <std::vector<ast::Statement*>> statements
+%type <ast::ArrayLiteral*> array
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -126,7 +127,7 @@ pattern    : IDENTIFIER PERIOD IDENTIFIER
 literal    : NUMBER { $$ = new ast::NumberLiteral($1); }
            | STRING { $$ = new ast::StringLiteral($1); }
            | boolean { $$ = $1; }
-           | array
+           | array   { $$ = $1; }
            | object { $$ = $1; }
            ;
 
@@ -141,7 +142,7 @@ properties : property                   { $$ = std::vector<ast::Property*>(); en
            | property COMMA properties  { $$ = enlist($3, $1); }
            ;
 
-array      : LBRACKET list RBRACKET
+array      : LBRACKET list RBRACKET { $$ = new ast::ArrayLiteral($2); }
            ;
 
 object     : LBRACE properties RBRACE { $$ = new ast::ObjectLiteral($2); }

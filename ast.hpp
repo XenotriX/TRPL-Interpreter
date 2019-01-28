@@ -133,7 +133,8 @@ namespace ast
 
   struct ArrayLiteral : Expression
   {
-    std::vector<Expression> values;
+    ArrayLiteral(const std::vector<Expression*> values);
+    std::vector<Expression*> values;
   };
 
   struct ObjectLiteral : Expression

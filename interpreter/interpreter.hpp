@@ -25,9 +25,10 @@ public:
   void exec(std::vector<ast::Statement*>);
   void addEventListener(std::function<void (LogLevel, std::string)>);
 private:
-  void log(LogLevel, std::string);
+  void log(LogLevel, std::string) const;
+  std::string toString(const Value& value) const;
   std::vector<std::function<void (LogLevel, std::string)>> listeners;
   std::map<std::string, ast::Expression*> variables;
-  Value eval(ast::Expression*);
+  Value eval(ast::Expression*) const;
 };
 
