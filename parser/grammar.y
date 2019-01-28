@@ -102,6 +102,7 @@
 %type <std::vector<ast::Statement*>> scope
 %type <std::vector<ast::Statement*>> statements
 %type <ast::ArrayLiteral*> array
+%type <ast::Pattern*> pattern
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -111,17 +112,19 @@ program    : statement          { cb->addStatement($1); }
 identifier : IDENTIFIER { $$ = new ast::Identifier($1); }
            ;
 
+pattern    : pattern PERIOD identifier
+           | identifier PERIOD identifier
+           | pattern LBRACKET expression RBRACKET { $$ = new ast::Pattern($1, $3); }
+           | identifier LBRACKET expression RBRACKET { $$ = new ast::Pattern($1, $3); }
+           ;
+
 expression : identifier { $$ = $1; }
-           | pattern
            | literal { $$ = $1; }
+           | pattern                       { $$ = $1; }
            | expression expression PLUS { $$ = new ast::Addition($1, $2); }
            | expression expression MINUS { $$ = new ast::Substraction($1, $2); }
            | expression expression TIMES { $$ = new ast::Multiplication($1, $2); }
            | expression expression DIVIDED { $$ = new ast::Division($1, $2); }
-           ;
-
-pattern    : IDENTIFIER PERIOD IDENTIFIER
-           | IDENTIFIER PERIOD pattern
            ;
 
 literal    : NUMBER { $$ = new ast::NumberLiteral($1); }

@@ -24,7 +24,8 @@ namespace ast
     Addition_t,
     Substraction_t,
     Multiplication_t,
-    Division_t
+    Division_t,
+    Pattern_t
   };
 
   struct Statement
@@ -37,6 +38,13 @@ namespace ast
   {
     DataType dtype;
     Expression(const DataType&);
+  };
+
+  struct Pattern : Expression
+  {
+    Pattern(Expression* object, Expression* member);
+    Expression* object;
+    Expression* member;
   };
 
   struct Branch : Statement

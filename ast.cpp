@@ -63,6 +63,12 @@ Identifier::Identifier(const std::string id) :
 
 }
 
+Pattern::Pattern(Expression* object, Expression* member) :
+  object(object), member(member), Expression(Pattern_t)
+{
+
+}
+
 Property::Property(Identifier* key, Expression* value) :
   key(key), value(value)
 {

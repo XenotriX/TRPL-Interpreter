@@ -103,6 +103,25 @@ Value Interpreter::eval(ast::Expression* expr) const
       return eval(variables.at(id));
       break;
     }
+    case ast::Pattern_t:
+    {
+      auto pattern = static_cast<ast::Pattern*>(expr);
+      Value object = eval(pattern->object);
+      Value member = eval(pattern->member);
+      if (std::holds_alternative<std::vector<ast::Expression*>>(object)) {
+        if (!std::holds_alternative<double>(member)) {
+          log(Error, "Index must be a number");
+          return Undefined();
+        }
+        auto expression = std::get<std::vector<ast::Expression*>>(object);
+        return eval(expression.at((int)std::get<double>(member)));
+      }
+      else {
+        log(Error, "Cannot access \"" + toString(member) + "\" of \"" + toString(object) + "\"");
+        return Undefined();
+      }
+      break;
+    }
     case ast::Number_t:
       return static_cast<ast::NumberLiteral*>(expr)->value;
       break;
