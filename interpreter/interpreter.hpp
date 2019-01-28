@@ -6,6 +6,7 @@
 #include <map>
 #include <variant>
 #include "../repl/repl.hpp"
+#include "stack.hpp"
 
 class Undefined {};
 
@@ -28,7 +29,7 @@ private:
   void log(LogLevel, std::string) const;
   std::string toString(const Value& value) const;
   std::vector<std::function<void (LogLevel, std::string)>> listeners;
-  std::map<std::string, ast::Expression*> variables;
   Value eval(ast::Expression*) const;
+  Storage storage;
 };
 

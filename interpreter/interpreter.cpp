@@ -15,21 +15,21 @@ void Interpreter::exec(ast::Statement* stmt)
     case ast::VarDeclaration_t:
     {
       auto var = static_cast<ast::VarDeclaration*>(stmt);
-      if (variables.count(var->name->id)) {
-        log(Error, var->name->id + " already exists.");
-        return;
+      try {
+        storage.Put(var->name->id, var->init);
+      } catch (std::invalid_argument ex) {
+        log(Error, ex.what());
       }
-      variables.insert({var->name->id, var->init});
       break;
     }
     case ast::Assignment_t:
     {
       auto assig = static_cast<ast::Assignment*>(stmt);
-      if (!variables.count(assig->name->id)) {
-        log(Error, "No variable named " + assig->name->id);
-        return;
+      try {
+        storage.Update(assig->name->id, assig->value);
+      } catch (std::invalid_argument ex) {
+        log(Error, ex.what());
       }
-      variables.at(assig->name->id) = assig->value;
       break;
     }
     case ast::PrintStatement_t:
@@ -121,11 +121,12 @@ Value Interpreter::eval(ast::Expression* expr) const
     case ast::Identifier_t:
     {
       std::string id = static_cast<ast::Identifier*>(expr)->id;
-      if (!variables.count(id)) {
-        log(Error, "No variable named " + id);
+      try {
+        return eval(storage.Get(id));
+      } catch (std::invalid_argument ex) {
+        log(Error, ex.what());
         return Undefined();
       }
-      return eval(variables.at(id));
       break;
     }
     case ast::Pattern_t:

@@ -17,7 +17,7 @@ ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 add_library(parserlib parser/parser.cpp ${BISON_Parser_OUTPUTS})
 add_library(scannerlib ${FLEX_Scanner_OUTPUTS})
-add_library(interpreter interpreter/interpreter.cpp)
+add_library(interpreter interpreter/interpreter.cpp interpreter/stack.cpp)
 add_library(repl repl/repl.cpp)
 set_target_properties(interpreter PROPERTIES CXX_STANDARD 17)
 
