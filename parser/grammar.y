@@ -103,6 +103,7 @@
 %type <std::vector<ast::Statement*>> statements
 %type <ast::ArrayLiteral*> array
 %type <ast::Pattern*> pattern
+%type <ast::ExitStatement*> exit
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -190,8 +191,8 @@ statements : statement            { $$ = std::vector<ast::Statement*>(); enlist(
            | statements statement { $$ = enlist($1, $2); }
            ;
 
-command    : print             { $$ = static_cast<ast::Statement*>($1); }
-           | exit
+command    : print   { $$ = $1; }
+           | exit    { $$ = $1; }
            | load
            | typeof
            ;
@@ -199,7 +200,7 @@ command    : print             { $$ = static_cast<ast::Statement*>($1); }
 print      : PRINT list { $$ = new ast::PrintStatement($2); }
            ;
 
-exit       : EXIT
+exit       : EXIT { $$ = new ast::ExitStatement; }
            ;
 
 load       : LOAD STRING

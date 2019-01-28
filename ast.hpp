@@ -11,6 +11,7 @@ namespace ast
     VarDeclaration_t,
     Assignment_t,
     Branch_t,
+    ExitStatement_t,
   };
 
   enum DataType {
@@ -149,5 +150,10 @@ namespace ast
   {
     ObjectLiteral(const std::vector<Property*>& properties);
     std::vector<Property*> properties;
+  };
+
+  struct ExitStatement : Statement
+  {
+    ExitStatement();
   };
 }

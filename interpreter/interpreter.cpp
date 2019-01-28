@@ -55,6 +55,10 @@ void Interpreter::exec(ast::Statement* stmt)
       }
       break;
     }
+    case ast::ExitStatement_t:
+      log(Warning, "Terminating");
+      exit(0);
+      break;
     default:
       std::cout << "Not Implemented" << std::endl;
       break;

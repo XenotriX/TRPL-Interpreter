@@ -135,3 +135,9 @@ ObjectLiteral::ObjectLiteral(const std::vector<Property*>& properties) :
 
 }
 
+ExitStatement::ExitStatement() :
+  Statement(ExitStatement_t)
+{
+
+}
+
