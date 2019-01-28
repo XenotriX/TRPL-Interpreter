@@ -149,7 +149,7 @@ object     : LBRACE properties RBRACE { $$ = new ast::ObjectLiteral($2); }
            ;
 
 list       : expression             { $$ = std::vector<ast::Expression*>(); enlist($$, $1); }
-           | expression COMMA list  { $$ = enlist($3, $1); }
+           | list COMMA expression  { $$ = enlist($1, $3); }
            ;
 
 assig_op   : ASSIG
