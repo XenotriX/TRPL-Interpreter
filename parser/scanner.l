@@ -66,7 +66,8 @@ letter [a-zA-Z]
 "if"                          return yy::parser::token::IF;
 {letter}({letter}|{digit})*   STR_TOKEN(yy::parser::token::IDENTIFIER);
 {digit}*("."{digit}*)?        NUM_TOKEN(yy::parser::token::NUMBER);
-\".*\"                        STR_TOKEN(yy::parser::token::STRING);
+\"[^"\\]*(?s:\\.[^"\\]*)*\"   STR_TOKEN(yy::parser::token::STRING);
+'[^'\\]*(?s:\\.[^'\\]*)*'     STR_TOKEN(yy::parser::token::STRING);
 [ \n\t]                       /* Ignore whitespaces */
 .                             return yy::parser::token::UNKNOWN;
 %%
