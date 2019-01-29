@@ -100,7 +100,7 @@ Assignment::Assignment(Identifier* name, Expression* value) :
 }
 
 Expression::Expression(const DataType& dtype) :
-  dtype(dtype)
+  dtype(dtype), Statement(Expression_t)
 {
 
 }

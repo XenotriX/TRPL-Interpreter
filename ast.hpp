@@ -12,6 +12,7 @@ namespace ast
     Assignment_t,
     Branch_t,
     ExitStatement_t,
+    Expression_t,
   };
 
   enum DataType {
@@ -35,7 +36,7 @@ namespace ast
     Type type;
   };
 
-  struct Expression
+  struct Expression : Statement
   {
     DataType dtype;
     Expression(const DataType&);

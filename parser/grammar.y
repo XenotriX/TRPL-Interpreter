@@ -185,6 +185,7 @@ statement  : vardec                  { $$ = $1; }
            | branch                  { $$ = $1; }
            | constdec
            | command
+           | expression              { $$ = $1; }
            ;
 
 statements : statement            { $$ = std::vector<ast::Statement*>(); enlist($$, $1); }
