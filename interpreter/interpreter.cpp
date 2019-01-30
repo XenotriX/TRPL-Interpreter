@@ -16,7 +16,7 @@ Value Interpreter::exec(std::vector<ast::Statement*> stmts) const
 Value Interpreter::exec(ast::Statement* stmt) const
 {
   switch(stmt->type) {
-    case ast::VarDeclaration_t:
+    case ast::StmtType::VarDeclaration:
     {
       auto var = static_cast<ast::VarDeclaration*>(stmt);
       try {
@@ -26,7 +26,7 @@ Value Interpreter::exec(ast::Statement* stmt) const
       }
       break;
     }
-    case ast::Assignment_t:
+    case ast::StmtType::Assignment:
     {
       auto assig = static_cast<ast::Assignment*>(stmt);
       try {
@@ -36,7 +36,7 @@ Value Interpreter::exec(ast::Statement* stmt) const
       }
       break;
     }
-    case ast::PrintStatement_t:
+    case ast::StmtType::Print:
     {
       auto print = static_cast<ast::PrintStatement*>(stmt);
       std::vector<ast::Expression*> list = print->list;
@@ -46,7 +46,7 @@ Value Interpreter::exec(ast::Statement* stmt) const
       }
       break;
     }
-    case ast::Branch_t:
+    case ast::StmtType::Branch:
     {
       auto branch = static_cast<ast::Branch*>(stmt);
       Value condition = eval(branch->condition);
@@ -59,7 +59,7 @@ Value Interpreter::exec(ast::Statement* stmt) const
       }
       break;
     }
-    case ast::While_t:
+    case ast::StmtType::While:
     {
       auto whileStmt = static_cast<ast::WhileStatement*>(stmt);
       if (!std::holds_alternative<bool>(eval(whileStmt->condition))) {
@@ -75,13 +75,13 @@ Value Interpreter::exec(ast::Statement* stmt) const
       }
       break;
     }
-    case ast::Expression_t:
+    case ast::StmtType::Expression:
       log(Info, toString(eval(static_cast<ast::Expression*>(stmt))));
       break;
-    case ast::Return_t:
+    case ast::StmtType::Return:
       return eval(static_cast<ast::ReturnStatement*>(stmt)->value);
       break;
-    case ast::ExitStatement_t:
+    case ast::StmtType::Exit:
       log(Warning, "Terminating");
       exit(0);
       break;
@@ -145,7 +145,7 @@ void Interpreter::log(LogLevel level, std::string output) const
 Value Interpreter::eval(ast::Expression* expr) const
 {
   switch(expr->dtype) {
-    case ast::Identifier_t:
+    case ast::ExprType::Identifier:
     {
       std::string id = static_cast<ast::Identifier*>(expr)->id;
       try {
@@ -156,7 +156,7 @@ Value Interpreter::eval(ast::Expression* expr) const
       }
       break;
     }
-    case ast::Pattern_t:
+    case ast::ExprType::Pattern:
     {
       auto pattern = static_cast<ast::Pattern*>(expr);
       Value object = eval(pattern->object);
@@ -170,23 +170,23 @@ Value Interpreter::eval(ast::Expression* expr) const
         return eval(expression.at((int)std::get<double>(member)));
       }
       else if (std::holds_alternative<std::unordered_map<std::string, ast::Expression*>>(object)) {
-        if (pattern->member->dtype != ast::Identifier_t)
+        if (pattern->member->dtype != ast::ExprType::Identifier)
           return Undefined();
         auto properties = std::get<std::unordered_map<std::string, ast::Expression*>>(object);
         return eval(properties.at(static_cast<ast::Identifier*>(pattern->member)->id));
       }
       break;
     }
-    case ast::Number_t:
+    case ast::ExprType::Number:
       return static_cast<ast::NumberLiteral*>(expr)->value;
       break;
-    case ast::String_t:
+    case ast::ExprType::String:
       return static_cast<ast::StringLiteral*>(expr)->value;
       break;
-    case ast::Boolean_t:
+    case ast::ExprType::Boolean:
       return static_cast<ast::BooleanLiteral*>(expr)->value;
       break;
-    case ast::Object_t:
+    case ast::ExprType::Object:
     {
       std::unordered_map<std::string, ast::Expression*> dict;
       auto properties = static_cast<ast::ObjectLiteral*>(expr)->properties;
@@ -196,10 +196,10 @@ Value Interpreter::eval(ast::Expression* expr) const
       return dict;
       break;
     }
-    case ast::Array_t:
+    case ast::ExprType::Array:
       return static_cast<ast::ArrayLiteral*>(expr)->values;
       break;
-    case ast::Operation_t:
+    case ast::ExprType::Operation:
     {
       auto operation = static_cast<ast::Operation*>(expr);
       double right, left;
@@ -234,13 +234,13 @@ Value Interpreter::eval(ast::Expression* expr) const
           return left >= right;
       }
     }
-    case ast::Function_t:
+    case ast::ExprType::Function:
     {
       auto funcLiteral = static_cast<ast::FunctionLiteral*>(expr);
       return *funcLiteral;
       break;
     }
-    case ast::Call_t:
+    case ast::ExprType::Call:
     {
       auto call = static_cast<ast::CallStatement*>(expr);
       Value value = eval(call->function);
@@ -260,7 +260,7 @@ Value Interpreter::eval(ast::Expression* expr) const
       break;
     }
     default:
-    case ast::Undefined_t:
+    case ast::ExprType::Undefined:
       return Undefined();
       break;
   }

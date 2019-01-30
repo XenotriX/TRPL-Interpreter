@@ -6,29 +6,29 @@
 
 namespace ast
 {
-  enum Type {
-    PrintStatement_t,
-    VarDeclaration_t,
-    Assignment_t,
-    Branch_t,
-    ExitStatement_t,
-    Expression_t,
-    Return_t,
-    While_t,
+  enum class StmtType {
+    Print,
+    VarDeclaration,
+    Assignment,
+    Branch,
+    Exit,
+    Expression,
+    Return,
+    While,
   };
 
-  enum DataType {
-    Identifier_t,
-    Undefined_t,
-    Number_t,
-    String_t,
-    Boolean_t,
-    Object_t,
-    Array_t,
-    Operation_t,
-    Pattern_t,
-    Function_t,
-    Call_t,
+  enum class ExprType {
+    Identifier,
+    Undefined,
+    Number,
+    String,
+    Boolean,
+    Object,
+    Array,
+    Operation,
+    Pattern,
+    Function,
+    Call,
   };
 
   enum class Operator {
@@ -46,14 +46,14 @@ namespace ast
 
   struct Statement
   {
-    Statement(const Type&);
-    Type type;
+    Statement(const StmtType&);
+    StmtType type;
   };
 
   struct Expression : Statement
   {
-    DataType dtype;
-    Expression(const DataType&);
+    ExprType dtype;
+    Expression(const ExprType&);
   };
 
   struct WhileStatement : Statement

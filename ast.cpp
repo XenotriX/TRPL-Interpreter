@@ -3,57 +3,57 @@
 
 using namespace ast;
 
-Statement::Statement(const Type& type) :
+Statement::Statement(const StmtType& type) :
   type(type)
 {
 
 }
 
 ReturnStatement::ReturnStatement(Expression* value) :
-  value(value), Statement(Return_t)
+  value(value), Statement(StmtType::Return)
 {
 
 }
 
 WhileStatement::WhileStatement(
     Expression* condition, std::vector<Statement*> consequence) :
-      condition(condition), consequence(consequence), Statement(While_t)
+      condition(condition), consequence(consequence), Statement(StmtType::While)
 {
 
 }
 
 Branch::Branch(Expression* condition, Statement* consequence) :
-  Statement(Branch_t), condition(condition)
+  Statement(StmtType::Branch), condition(condition)
 {
   this->consequence.push_back(consequence);
 }
 
 Branch::Branch(Expression* condition, std::vector<Statement*> consequence) :
-  Statement(Branch_t), condition(condition), consequence(consequence)
+  Statement(StmtType::Branch), condition(condition), consequence(consequence)
 {
 
 }
 
 Operation::Operation(const Operator& op, Expression* left, Expression* right) :
-  Expression(Operation_t), op(op), left(left), right(right)
+  Expression(ExprType::Operation), op(op), left(left), right(right)
 {
 
 }
 
 Undefined::Undefined() :
-  Expression(Undefined_t)
+  Expression(ExprType::Undefined)
 {
 
 }
 
 Identifier::Identifier(const std::string id) :
-  id(id), Expression(Identifier_t)
+  id(id), Expression(ExprType::Identifier)
 {
 
 }
 
 Pattern::Pattern(Expression* object, Expression* member) :
-  object(object), member(member), Expression(Pattern_t)
+  object(object), member(member), Expression(ExprType::Pattern)
 {
 
 }
@@ -65,7 +65,7 @@ Property::Property(Identifier* key, Expression* value) :
 }
 
 PrintStatement::PrintStatement(std::vector<Expression*> list) :
-  list(list), Statement(PrintStatement_t)
+  list(list), Statement(StmtType::Print)
 {
 
 }
@@ -77,55 +77,55 @@ VarDeclaration::VarDeclaration(Identifier* name) :
 }
 
 VarDeclaration::VarDeclaration(Identifier* name, Expression* init) :
-  name(name), init(init), Statement(VarDeclaration_t)
+  name(name), init(init), Statement(StmtType::VarDeclaration)
 {
 
 }
 
 Assignment::Assignment(Identifier* name, Expression* value) :
-  name(name), value(value), Statement(Assignment_t)
+  name(name), value(value), Statement(StmtType::Assignment)
 {
 
 }
 
-Expression::Expression(const DataType& dtype) :
-  dtype(dtype), Statement(Expression_t)
+Expression::Expression(const ExprType& dtype) :
+  dtype(dtype), Statement(StmtType::Expression)
 {
 
 }
 
 NumberLiteral::NumberLiteral(const double value) :
-  value(value), Expression(Number_t)
+  value(value), Expression(ExprType::Number)
 {
 
 }
 
 StringLiteral::StringLiteral(const std::string value) :
-  value(value), Expression(String_t)
+  value(value), Expression(ExprType::String)
 {
 
 }
 
 BooleanLiteral::BooleanLiteral(const bool value) :
-  value(value), Expression(Boolean_t)
+  value(value), Expression(ExprType::Boolean)
 {
 
 }
 
 ArrayLiteral::ArrayLiteral(const std::vector<Expression*>& values) :
-  values(values), Expression(Array_t)
+  values(values), Expression(ExprType::Array)
 {
 
 }
 
 ObjectLiteral::ObjectLiteral(const std::vector<Property*>& properties) :
-  properties(properties), Expression(Object_t)
+  properties(properties), Expression(ExprType::Object)
 {
 
 }
 
 ExitStatement::ExitStatement() :
-  Statement(ExitStatement_t)
+  Statement(StmtType::Exit)
 {
 
 }
@@ -133,13 +133,13 @@ ExitStatement::ExitStatement() :
 using ParamList = std::vector<ast::Identifier*>;
 
 FunctionLiteral::FunctionLiteral(ParamList params, std::vector<ast::Statement*> body) :
-  params(params), body(body), Expression(Function_t)
+  params(params), body(body), Expression(ExprType::Function)
 {
 
 }
 
 CallStatement::CallStatement(Identifier* function, std::vector<Expression*> args) :
-  function(function), args(args), Expression(Call_t)
+  function(function), args(args), Expression(ExprType::Call)
 {
 
 }
