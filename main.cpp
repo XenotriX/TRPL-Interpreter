@@ -17,8 +17,13 @@ int main (int argc, char *argv[])
   });
   interpreter.addEventListener([&repl](LogLevel level, std::string input){repl.print(level, input);});
   repl.addEventListener([&interpreter, &parser, &repl](std::string input) {
-    std::vector<ast::Statement*> stmts = parser.parse(input);
-    interpreter.exec(stmts);
+    try {
+      std::vector<ast::Statement*> stmts = parser.parse(input);
+      interpreter.exec(stmts);
+    }
+    catch (yy::parser::syntax_error err) {
+      repl.print(Error, err.what());
+    }
   });
 
   repl.start();
