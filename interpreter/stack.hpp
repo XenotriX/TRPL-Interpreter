@@ -1,10 +1,11 @@
 #pragma once
 
 #include <map>
+#include <stack>
 #include "./ast.hpp"
 
 using Frame = std::map<std::string, ast::Expression*>;
-using Stack = std::vector<Frame>;
+using Stack = std::stack<Frame>;
 
 class Storage
 {
