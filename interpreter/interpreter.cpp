@@ -228,7 +228,10 @@ Value Interpreter::eval(ast::Expression* expr) const
     case ast::Call_t:
     {
       auto call = static_cast<ast::CallStatement*>(expr);
-      auto function = std::get<ast::FunctionLiteral>(eval(call->function));
+      Value value = eval(call->function);
+      if (!std::holds_alternative<ast::FunctionLiteral>(value))
+        throw std::invalid_argument("\"" + call->function->id + "\" is not a function");
+      auto function = std::get<ast::FunctionLiteral>(value);
       auto args = call->args;
       auto params = function.params;
       if (params.size() != args.size())

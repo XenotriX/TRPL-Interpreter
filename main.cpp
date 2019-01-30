@@ -24,6 +24,9 @@ int main (int argc, char *argv[])
     catch (yy::parser::syntax_error err) {
       repl.print(Error, err.what());
     }
+    catch (std::invalid_argument ex) {
+      repl.print(Error, ex.what());
+    }
   });
 
   repl.start();
