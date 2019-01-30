@@ -59,6 +59,22 @@ Value Interpreter::exec(ast::Statement* stmt) const
       }
       break;
     }
+    case ast::While_t:
+    {
+      auto whileStmt = static_cast<ast::WhileStatement*>(stmt);
+      if (!std::holds_alternative<bool>(eval(whileStmt->condition))) {
+        log(Error, "Condition is not of type Boolean.");
+        break;
+      }
+      while (std::get<bool>(eval(whileStmt->condition))) {
+        exec(whileStmt->consequence);
+        if (!std::holds_alternative<bool>(eval(whileStmt->condition))) {
+          log(Error, "Condition is no longer of type Boolean");
+          break;
+        }
+      }
+      break;
+    }
     case ast::Expression_t:
       log(Info, toString(eval(static_cast<ast::Expression*>(stmt))));
       break;

@@ -66,6 +66,7 @@ letter [a-zA-Z]
 "exit"                        return yy::parser::token::EXIT;
 "if"                          return yy::parser::token::IF;
 "return"                      return yy::parser::token::RETURN;
+"while"                       return yy::parser::token::WHILE;
 {letter}({letter}|{digit})*   STR_TOKEN(yy::parser::token::IDENTIFIER);
 {digit}*("."{digit}*)?        NUM_TOKEN(yy::parser::token::NUMBER);
 \"[^"\\]*(?s:\\.[^"\\]*)*\"   STR_TOKEN(yy::parser::token::STRING);

@@ -14,6 +14,7 @@ namespace ast
     ExitStatement_t,
     Expression_t,
     Return_t,
+    While_t,
   };
 
   enum DataType {
@@ -43,6 +44,13 @@ namespace ast
   {
     DataType dtype;
     Expression(const DataType&);
+  };
+
+  struct WhileStatement : Statement
+  {
+    WhileStatement(Expression* condition, std::vector<Statement*> consequence);
+    Expression* condition;
+    std::vector<Statement*> consequence;
   };
 
   struct ReturnStatement : Statement

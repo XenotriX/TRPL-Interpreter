@@ -87,6 +87,7 @@
 %token FALSE
 %token ARROW
 %token RETURN
+%token WHILE
 %type <ast::Identifier*> identifier
 %type <ast::VarDeclaration*> vardec
 %type <ast::Assignment*> assignment
@@ -110,6 +111,7 @@
 %type <ast::FunctionLiteral*> function
 %type <ast::CallStatement*> func_call
 %type <ast::ReturnStatement*> return
+%type <ast::WhileStatement*> while
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -208,6 +210,10 @@ statement  : vardec                  { $$ = $1; }
            | command
            | expression              { $$ = $1; }
            | return                  { $$ = $1; }
+           | while                   { $$ = $1; }
+           ;
+
+while      : WHILE LPARENT expression RPARENT scope { $$ = new ast::WhileStatement($3, $5); }
            ;
 
 statements : statement            { $$ = std::vector<ast::Statement*>(); enlist($$, $1); }

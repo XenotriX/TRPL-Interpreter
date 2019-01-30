@@ -15,6 +15,13 @@ ReturnStatement::ReturnStatement(Expression* value) :
 
 }
 
+WhileStatement::WhileStatement(
+    Expression* condition, std::vector<Statement*> consequence) :
+      condition(condition), consequence(consequence), Statement(While_t)
+{
+
+}
+
 Branch::Branch(Expression* condition, Statement* consequence) :
   Statement(Branch_t), condition(condition)
 {
