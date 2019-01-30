@@ -56,7 +56,7 @@ void Interpreter::exec(ast::Statement* stmt) const
       break;
     }
     case ast::Expression_t:
-      eval(static_cast<ast::Expression*>(stmt));
+      log(Info, toString(eval(static_cast<ast::Expression*>(stmt))));
       break;
     case ast::ExitStatement_t:
       log(Warning, "Terminating");
