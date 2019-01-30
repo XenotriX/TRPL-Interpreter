@@ -13,6 +13,7 @@ namespace ast
     Branch_t,
     ExitStatement_t,
     Expression_t,
+    Return_t,
   };
 
   enum DataType {
@@ -42,6 +43,12 @@ namespace ast
   {
     DataType dtype;
     Expression(const DataType&);
+  };
+
+  struct ReturnStatement : Statement
+  {
+    ReturnStatement(Expression* value);
+    Expression* value;
   };
 
   struct Pattern : Expression

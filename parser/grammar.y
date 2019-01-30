@@ -86,6 +86,7 @@
 %token TRUE
 %token FALSE
 %token ARROW
+%token RETURN
 %type <ast::Identifier*> identifier
 %type <ast::VarDeclaration*> vardec
 %type <ast::Assignment*> assignment
@@ -108,6 +109,7 @@
 %type <std::vector<ast::Identifier*>> param
 %type <ast::FunctionLiteral*> function
 %type <ast::CallStatement*> func_call
+%type <ast::ReturnStatement*> return
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -131,6 +133,9 @@ expression : identifier { $$ = $1; }
            | expression expression MINUS { $$ = new ast::Substraction($1, $2); }
            | expression expression TIMES { $$ = new ast::Multiplication($1, $2); }
            | expression expression DIVIDED { $$ = new ast::Division($1, $2); }
+           ;
+
+return     : RETURN expression  { $$ = new ast::ReturnStatement($2); }
            ;
 
 literal    : NUMBER { $$ = new ast::NumberLiteral($1); }
@@ -202,6 +207,7 @@ statement  : vardec                  { $$ = $1; }
            | constdec
            | command
            | expression              { $$ = $1; }
+           | return                  { $$ = $1; }
            ;
 
 statements : statement            { $$ = std::vector<ast::Statement*>(); enlist($$, $1); }

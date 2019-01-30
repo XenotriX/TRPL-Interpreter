@@ -3,13 +3,17 @@
 #include <cmath>
 #include <stdexcept>
 
-void Interpreter::exec(std::vector<ast::Statement*> stmts) const
+Value Interpreter::exec(std::vector<ast::Statement*> stmts) const
 {
-  for (ast::Statement* stmt: stmts)
-    exec(stmt);
+  for (ast::Statement* stmt: stmts) {
+    Value val = exec(stmt);
+    if (!std::holds_alternative<Undefined>(val))
+      return val;
+  }
+  return Undefined();
 }
 
-void Interpreter::exec(ast::Statement* stmt) const
+Value Interpreter::exec(ast::Statement* stmt) const
 {
   switch(stmt->type) {
     case ast::VarDeclaration_t:
@@ -58,6 +62,9 @@ void Interpreter::exec(ast::Statement* stmt) const
     case ast::Expression_t:
       log(Info, toString(eval(static_cast<ast::Expression*>(stmt))));
       break;
+    case ast::Return_t:
+      return eval(static_cast<ast::ReturnStatement*>(stmt)->value);
+      break;
     case ast::ExitStatement_t:
       log(Warning, "Terminating");
       exit(0);
@@ -66,6 +73,7 @@ void Interpreter::exec(ast::Statement* stmt) const
       std::cout << "Not Implemented" << std::endl;
       break;
   }
+  return Undefined();
 }
 
 std::string Interpreter::toString(const Value& val) const
@@ -239,8 +247,9 @@ Value Interpreter::eval(ast::Expression* expr) const
       storage.NewFrame();
       for (int i = 0; i < params.size(); i++)
         storage.Put(params[i]->id, args[i]);
-      exec(function.body);
+      Value ret = exec(function.body);
       storage.PopFrame();
+      return ret;
       break;
     }
     default:

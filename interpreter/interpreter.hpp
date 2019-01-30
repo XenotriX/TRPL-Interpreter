@@ -23,8 +23,8 @@ typedef std::variant<
 class Interpreter
 {
 public:
-  void exec(ast::Statement*) const;
-  void exec(std::vector<ast::Statement*>) const;
+  Value exec(ast::Statement*) const;
+  Value exec(std::vector<ast::Statement*>) const;
   void addEventListener(std::function<void (LogLevel, std::string)>);
 private:
   void log(LogLevel, std::string) const;

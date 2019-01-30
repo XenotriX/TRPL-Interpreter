@@ -9,6 +9,12 @@ Statement::Statement(const Type& type) :
 
 }
 
+ReturnStatement::ReturnStatement(Expression* value) :
+  value(value), Statement(Return_t)
+{
+
+}
+
 Branch::Branch(Expression* condition, Statement* consequence) :
   Statement(Branch_t), condition(condition)
 {
