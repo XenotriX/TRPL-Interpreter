@@ -25,13 +25,23 @@ namespace ast
     Boolean_t,
     Object_t,
     Array_t,
-    Addition_t,
-    Substraction_t,
-    Multiplication_t,
-    Division_t,
+    Operation_t,
     Pattern_t,
     Function_t,
     Call_t,
+  };
+
+  enum class Operator {
+    Addition,
+    Substraction,
+    Multiplication,
+    Division,
+    Equal,
+    NotEqual,
+    Less,
+    Greater,
+    LessEqual,
+    GreaterEqual,
   };
 
   struct Statement
@@ -76,29 +86,10 @@ namespace ast
 
   struct Operation : Expression
   {
-    Operation(const DataType&, Expression*, Expression*);
+    Operation(const Operator& op, Expression*, Expression*);
+    Operator op;
     Expression* left;
     Expression* right;
-  };
-
-  struct Addition : Operation
-  {
-    Addition(Expression*, Expression*);
-  };
-
-  struct Substraction : Operation
-  {
-    Substraction(Expression*, Expression*);
-  };
-
-  struct Multiplication : Operation
-  {
-    Multiplication(Expression*, Expression*);
-  };
-
-  struct Division : Operation
-  {
-    Division(Expression*, Expression*);
   };
 
   struct Undefined : Expression

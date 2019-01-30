@@ -199,49 +199,40 @@ Value Interpreter::eval(ast::Expression* expr) const
     case ast::Array_t:
       return static_cast<ast::ArrayLiteral*>(expr)->values;
       break;
-    case ast::Addition_t:
+    case ast::Operation_t:
     {
-      ast::Addition* addition = static_cast<ast::Addition*>(expr);
-      Value left  = eval(addition->left);
-      Value right = eval(addition->right);
-      if (!std::holds_alternative<double>(left) ||
-          !std::holds_alternative<double>(right))
+      auto operation = static_cast<ast::Operation*>(expr);
+      double right, left;
+      try {
+        left  = std::get<double>(eval(operation->left));
+        right = std::get<double>(eval(operation->right));
+      }
+      catch (std::bad_variant_access ex) {
         return Undefined();
-      return std::get<double>(left) +  std::get<double>(right);
-      break;
-    }
-    case ast::Substraction_t:
-    {
-      ast::Substraction* substraction = static_cast<ast::Substraction*>(expr);
-      Value left  = eval(substraction->left);
-      Value right = eval(substraction->right);
-      if (!std::holds_alternative<double>(left) ||
-          !std::holds_alternative<double>(right))
-        return Undefined();
-      return std::get<double>(left) -  std::get<double>(right);
-      break;
-    }
-    case ast::Multiplication_t:
-    {
-      ast::Multiplication* multiplication = static_cast<ast::Multiplication*>(expr);
-      Value left  = eval(multiplication->left);
-      Value right = eval(multiplication->right);
-      if (!std::holds_alternative<double>(left) ||
-          !std::holds_alternative<double>(right))
-        return Undefined();
-      return std::get<double>(left) *  std::get<double>(right);
-      break;
-    }
-    case ast::Division_t:
-    {
-      ast::Division* division = static_cast<ast::Division*>(expr);
-      Value left  = eval(division->left);
-      Value right = eval(division->right);
-      if (!std::holds_alternative<double>(left) ||
-          !std::holds_alternative<double>(right))
-        return Undefined();
-      return std::get<double>(left) / std::get<double>(right);
-      break;
+      }
+      switch(operation->op) {
+        case ast::Operator::Addition:
+          return left +  right;
+        case ast::Operator::Substraction:
+          return left -  right;
+        case ast::Operator::Multiplication:
+          return left *  right;
+        case ast::Operator::Division:
+          if (right == 0) throw std::invalid_argument("Division by zero");
+          return left / right;
+        case ast::Operator::Equal:
+          return left == right;
+        case ast::Operator::NotEqual:
+          return left != right;
+        case ast::Operator::Less:
+          return left < right;
+        case ast::Operator::LessEqual:
+          return left <= right;
+        case ast::Operator::Greater:
+          return left > right;
+        case ast::Operator::GreaterEqual:
+          return left >= right;
+      }
     }
     case ast::Function_t:
     {

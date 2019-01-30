@@ -131,10 +131,15 @@ expression : identifier { $$ = $1; }
            | literal { $$ = $1; }
            | pattern                       { $$ = $1; }
            | func_call { $$ = $1; }
-           | expression expression PLUS { $$ = new ast::Addition($1, $2); }
-           | expression expression MINUS { $$ = new ast::Substraction($1, $2); }
-           | expression expression TIMES { $$ = new ast::Multiplication($1, $2); }
-           | expression expression DIVIDED { $$ = new ast::Division($1, $2); }
+           | expression expression PLUS        { $$ = new ast::Operation(ast::Operator::Addition, $1, $2); }
+           | expression expression MINUS       { $$ = new ast::Operation(ast::Operator::Substraction, $1, $2); }
+           | expression expression TIMES       { $$ = new ast::Operation(ast::Operator::Multiplication, $1, $2); }
+           | expression expression DIVIDED     { $$ = new ast::Operation(ast::Operator::Division, $1, $2); }
+           | expression EQUAL expression       { $$ = new ast::Operation(ast::Operator::Equal, $1, $3); }
+           | expression LESS expression        { $$ = new ast::Operation(ast::Operator::Less, $1, $3); }
+           | expression LESS_EQL expression    { $$ = new ast::Operation(ast::Operator::Greater, $1, $3); }
+           | expression GREATER expression     { $$ = new ast::Operation(ast::Operator::GreaterEqual, $1, $3); }
+           | expression GREATER_EQL expression { $$ = new ast::Operation(ast::Operator::LessEqual, $1, $3); }
            ;
 
 return     : RETURN expression  { $$ = new ast::ReturnStatement($2); }
