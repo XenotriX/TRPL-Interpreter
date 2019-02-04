@@ -26,9 +26,14 @@ void Parser::requestMore(int indent) const
 
 std::vector<ast::Statement*> Parser::parse(const std::string& line) const
 {
-  myParserOutput out;
   std::istringstream in(line);
-  yy::scanner scanner(&in);
+  return parse(&in);
+}
+
+std::vector<ast::Statement*> Parser::parse(std::istream* in) const
+{
+  myParserOutput out;
+  yy::scanner scanner(in);
   yy::parser parser(&scanner, &out);
   int result = parser.parse();
   if (result != 0) {

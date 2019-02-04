@@ -115,7 +115,7 @@
 
 %%
 program    : statement          { cb->addStatement($1); }
-           | statement program
+           | program statement  { cb->addStatement($2); }
            ;
 
 identifier : IDENTIFIER { $$ = new ast::Identifier($1); }
@@ -212,7 +212,7 @@ statement  : vardec                  { $$ = $1; }
            | assignment              { $$ = $1; }
            | branch                  { $$ = $1; }
            | constdec
-           | command
+           | command                 { $$ = $1; }
            | expression              { $$ = $1; }
            | return                  { $$ = $1; }
            | while                   { $$ = $1; }

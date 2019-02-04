@@ -7,6 +7,7 @@ class Parser
 {
 public:
   std::vector<ast::Statement*> parse(const std::string&) const;
+  std::vector<ast::Statement*> parse(std::istream* in) const;
   void addEventListener(std::function<void (int)>);
 private:
   void requestMore(int) const;
