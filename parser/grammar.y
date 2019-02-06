@@ -198,11 +198,13 @@ scope      : LBRACE statements RBRACE                { $$ = $2; }
            | LBRACE                                  { cb->indent++; }
            ;
 
-assignment : identifier assig_op expression          { $$ = new ast::Assignment($1, $3); }
+assignment : identifier ASSIG expression             { $$ = new ast::Assignment($1, $3); }
+           | identifier BECOMES expression           { $$ = new ast::Assignment($1, $3, true); }
            ;
 
-vardec     : VARDEC identifier { $$ = new ast::VarDeclaration($2); }
-           | VARDEC identifier assig_op expression { $$ = new ast::VarDeclaration($2, $4); }
+vardec     : VARDEC identifier                       { $$ = new ast::VarDeclaration($2); }
+           | VARDEC identifier ASSIG expression      { $$ = new ast::VarDeclaration($2, $4); }
+           | VARDEC identifier BECOMES expression    { $$ = new ast::VarDeclaration($2, $4, true); }
            ;
 
 constdec   : CONSTDEC identifier assig_op expression

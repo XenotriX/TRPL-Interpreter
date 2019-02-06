@@ -112,7 +112,8 @@ namespace ast
   struct VarDeclaration : Statement
   {
     VarDeclaration(Identifier*);
-    VarDeclaration(Identifier*, Expression*);
+    VarDeclaration(Identifier* id, Expression* value, bool byValue = false);
+    bool byValue;
     Identifier* name;
     Expression* init;
   };
@@ -126,7 +127,8 @@ namespace ast
 
   struct Assignment : Statement
   {
-    Assignment(Identifier*, Expression*);
+    Assignment(Identifier* id, Expression* expr, bool byValue = false);
+    bool byValue;
     Identifier* name;
     Expression* value;
   };

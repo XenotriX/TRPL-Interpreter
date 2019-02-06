@@ -3,6 +3,28 @@
 #include <cmath>
 #include <stdexcept>
 
+static ast::Expression* val2expr(const Value& value)
+{
+  // Number
+  if (std::holds_alternative<double>(value))
+    return new ast::NumberLiteral(std::get<double>(value));
+  // String
+  if (std::holds_alternative<std::string>(value))
+    return new ast::StringLiteral(std::get<std::string>(value));
+  // Array
+  if (std::holds_alternative<std::vector<ast::Expression*>>(value))
+    return new ast::ArrayLiteral(std::get<std::vector<ast::Expression*>>(value));
+  // Object
+  if (std::holds_alternative<std::unordered_map<std::string, ast::Expression*>>(value))
+    throw std::logic_error("Not Implemented");
+  // Undefined
+  if (std::holds_alternative<Undefined>(value))
+    return new ast::Undefined();
+  // Function
+  if (std::holds_alternative<ast::FunctionLiteral>(value))
+    return new ast::FunctionLiteral(std::get<ast::FunctionLiteral>(value));
+}
+
 Value Interpreter::exec(std::vector<ast::Statement*> stmts) const
 {
   for (ast::Statement* stmt: stmts) {
@@ -20,7 +42,10 @@ Value Interpreter::exec(ast::Statement* stmt) const
     {
       auto var = static_cast<ast::VarDeclaration*>(stmt);
       try {
-        storage.Put(var->name->id, var->init);
+        if (var->byValue)
+          storage.Put(var->name->id, val2expr(eval(var->init)));
+        else
+          storage.Put(var->name->id, var->init);
       } catch (std::invalid_argument ex) {
         log(Error, ex.what());
       }
@@ -30,7 +55,10 @@ Value Interpreter::exec(ast::Statement* stmt) const
     {
       auto assig = static_cast<ast::Assignment*>(stmt);
       try {
-        storage.Update(assig->name->id, assig->value);
+        if (assig->byValue)
+          storage.Update(assig->name->id, val2expr(eval(assig->value)));
+        else
+          storage.Update(assig->name->id, assig->value);
       } catch (std::invalid_argument ex) {
         log(Error, ex.what());
       }
@@ -248,6 +276,8 @@ Value Interpreter::eval(ast::Expression* expr) const
         throw std::invalid_argument("\"" + call->function->id + "\" is not a function");
       auto function = std::get<ast::FunctionLiteral>(value);
       auto args = call->args;
+      for (auto& arg: args)
+        arg = val2expr(eval(arg));
       auto params = function.params;
       if (params.size() != args.size())
         throw std::invalid_argument("Parameters and arguments don't match");

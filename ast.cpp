@@ -76,14 +76,14 @@ VarDeclaration::VarDeclaration(Identifier* name) :
 
 }
 
-VarDeclaration::VarDeclaration(Identifier* name, Expression* init) :
-  name(name), init(init), Statement(StmtType::VarDeclaration)
+VarDeclaration::VarDeclaration(Identifier* name, Expression* init, bool byValue/*= false*/) :
+  name(name), init(init), byValue(byValue), Statement(StmtType::VarDeclaration)
 {
 
 }
 
-Assignment::Assignment(Identifier* name, Expression* value) :
-  name(name), value(value), Statement(StmtType::Assignment)
+Assignment::Assignment(Identifier* name, Expression* value, bool byValue /*= false*/) :
+  name(name), value(value), byValue(byValue), Statement(StmtType::Assignment)
 {
 
 }
