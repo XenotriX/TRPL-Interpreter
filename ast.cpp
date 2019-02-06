@@ -136,6 +136,12 @@ ExitStatement::ExitStatement() :
 
 }
 
+LoadStatement::LoadStatement(Expression* path) :
+  path(path), Statement(StmtType::Load)
+{
+
+}
+
 using ParamList = std::vector<ast::Identifier*>;
 
 FunctionLiteral::FunctionLiteral(ParamList params, std::vector<ast::Statement*> body) :

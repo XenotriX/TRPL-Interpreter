@@ -113,6 +113,17 @@ Value Interpreter::exec(ast::Statement* stmt) const
       log(Warning, "Terminating");
       exit(0);
       break;
+    case ast::StmtType::Load:
+    {
+      auto load = static_cast<ast::LoadStatement*>(stmt);
+      Value path = eval(load->path);
+      if (!std::holds_alternative<std::string>(path)) {
+        log(Warning, "Path must be a String");
+        break;
+      }
+      loadFile(std::get<std::string>(path));
+      break;
+    }
     default:
       std::cout << "Not Implemented" << std::endl;
       break;
@@ -159,14 +170,25 @@ std::string Interpreter::toString(const Value& val) const
   }
 }
 
-void Interpreter::addEventListener(std::function<void (LogLevel, std::string)> callback)
+void Interpreter::addLogListener(std::function<void (LogLevel, std::string)> callback)
 {
-  listeners.push_back(callback);
+  logListeners.push_back(callback);
+}
+
+void Interpreter::addLoadFileListener(std::function<void (std::string)> callback)
+{
+  loadFileListeners.push_back(callback);
+}
+
+void Interpreter::loadFile(const std::string& path) const
+{
+  for (auto listener: loadFileListeners)
+    listener(path);
 }
 
 void Interpreter::log(LogLevel level, std::string output) const
 {
-  for (auto listener: listeners)
+  for (auto listener: logListeners)
     listener(level, output);
 }
 

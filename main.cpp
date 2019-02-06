@@ -11,10 +11,32 @@ int main (int argc, char *argv[])
   REPL repl;
   Parser parser;
 
+  auto loadFile = [&interpreter, &repl, &parser] (const std::string& path)
+  {
+    std::ifstream file;
+    file.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+    try {
+      file.open(path, std::ifstream::in);
+      std::vector<ast::Statement*> stmts = parser.parse(&file);
+      interpreter.exec(stmts);
+    }
+    catch (std::ifstream::failure ex) {
+      repl.print(Error, "Failed to open file \"" + path + "\"");
+    }
+    catch (yy::parser::syntax_error err) {
+      repl.print(Error, err.what());
+    }
+    catch (std::invalid_argument ex) {
+      repl.print(Error, ex.what());
+    }
+  };
+
+
   parser.addEventListener([&repl](int indent) {
     repl.setIndent(indent);
   });
-  interpreter.addEventListener([&repl](LogLevel level, std::string input){repl.print(level, input);});
+  interpreter.addLogListener([&repl](LogLevel level, std::string input){repl.print(level, input);});
+  interpreter.addLoadFileListener(loadFile);
   repl.addEventListener([&interpreter, &parser, &repl](std::string input) {
     try {
       std::vector<ast::Statement*> stmts = parser.parse(input);
@@ -29,22 +51,7 @@ int main (int argc, char *argv[])
   });
 
   if (argc > 1) {
-    std::ifstream file;
-    file.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
-    try {
-      file.open(argv[1], std::ifstream::in);
-      std::vector<ast::Statement*> stmts = parser.parse(&file);
-      interpreter.exec(stmts);
-    }
-    catch (std::ifstream::failure ex) {
-      repl.print(Error, "Failed to open file \"" + std::string(argv[1]) + "\"");
-    }
-    catch (yy::parser::syntax_error err) {
-      repl.print(Error, err.what());
-    }
-    catch (std::invalid_argument ex) {
-      repl.print(Error, ex.what());
-    }
+    loadFile(argv[1]);
   }
   else {
     repl.start();

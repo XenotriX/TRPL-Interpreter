@@ -113,6 +113,7 @@
 %type <ast::ReturnStatement*> return
 %type <ast::WhileStatement*> while
 %type <ast::TypeOf*> typeof
+%type <ast::LoadStatement*> load
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -239,7 +240,7 @@ statements : statement            { $$ = std::vector<ast::Statement*>(); enlist(
 
 command    : print   { $$ = $1; }
            | exit    { $$ = $1; }
-           | load
+           | load    { $$ = $1; }
            ;
 
 print      : PRINT list { $$ = new ast::PrintStatement($2); }
@@ -248,7 +249,7 @@ print      : PRINT list { $$ = new ast::PrintStatement($2); }
 exit       : EXIT { $$ = new ast::ExitStatement; }
            ;
 
-load       : LOAD STRING
+load       : LOAD expression { $$ = new ast::LoadStatement($2); }
            ;
 
 typeof     : TYPEOF expression { $$ = new ast::TypeOf($2); }

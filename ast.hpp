@@ -15,6 +15,7 @@ namespace ast
     Expression,
     Return,
     While,
+    Load,
   };
 
   enum class ExprType {
@@ -173,6 +174,12 @@ namespace ast
   struct ExitStatement : Statement
   {
     ExitStatement();
+  };
+
+  struct LoadStatement : Statement
+  {
+    LoadStatement(Expression* path);
+    Expression* path;
   };
 
   using ParamList = std::vector<ast::Identifier*>;
