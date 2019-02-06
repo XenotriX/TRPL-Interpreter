@@ -162,16 +162,20 @@ property   : identifier COLON expression { $$ = new ast::Property($1, $3); }
 
 properties : property                   { $$ = std::vector<ast::Property*>(); enlist($$, $1); }
            | property COMMA properties  { $$ = enlist($3, $1); }
+           | property COMMA EOL properties  { $$ = enlist($4, $1); }
            ;
 
 array      : LBRACKET list RBRACKET { $$ = new ast::ArrayLiteral($2); }
+           | LBRACKET EOL list EOL RBRACKET { $$ = new ast::ArrayLiteral($3); }
            ;
 
 object     : LBRACE properties RBRACE { $$ = new ast::ObjectLiteral($2); }
+           | LBRACE EOL properties EOL RBRACE { $$ = new ast::ObjectLiteral($3); }
            ;
 
 list       : expression             { $$ = std::vector<ast::Expression*>(); enlist($$, $1); }
            | list COMMA expression  { $$ = enlist($1, $3); }
+           | list COMMA EOL expression  { $$ = enlist($1, $4); }
            ;
 
 param      : identifier             { $$ = std::vector<ast::Identifier*>(); enlist($$, $1); }
@@ -189,11 +193,14 @@ assig_op   : ASSIG
            ;
 
 branch     : IF LPARENT expression RPARENT statement { $$ = new ast::Branch($3, $5); }
+           | IF LPARENT expression RPARENT EOL statement { $$ = new ast::Branch($3, $6); }
            | IF LPARENT expression RPARENT scope     { $$ = new ast::Branch($3, $5); }
+           | IF LPARENT expression RPARENT EOL scope     { $$ = new ast::Branch($3, $6); }
            | IF LPARENT expression RPARENT           { cb->indent++; }
            ;
 
 scope      : LBRACE statements RBRACE                { $$ = $2; }
+           | LBRACE EOL statements RBRACE        { $$ = $3; }
            | LBRACE statements                       { cb->indent++; }
            | LBRACE                                  { cb->indent++; }
            ;
@@ -210,17 +217,18 @@ vardec     : VARDEC identifier                       { $$ = new ast::VarDeclarat
 constdec   : CONSTDEC identifier assig_op expression
            ;
 
-statement  : vardec                  { $$ = $1; }
-           | assignment              { $$ = $1; }
-           | branch                  { $$ = $1; }
-           | constdec
-           | command                 { $$ = $1; }
-           | expression              { $$ = $1; }
-           | return                  { $$ = $1; }
-           | while                   { $$ = $1; }
+statement  : vardec EOL              { $$ = $1; }
+           | assignment EOL          { $$ = $1; }
+           | branch EOL              { $$ = $1; }
+           | constdec EOL
+           | command EOL             { $$ = $1; }
+           | expression EOL          { $$ = $1; }
+           | return EOL              { $$ = $1; }
+           | while EOL               { $$ = $1; }
            ;
 
 while      : WHILE LPARENT expression RPARENT scope { $$ = new ast::WhileStatement($3, $5); }
+           | WHILE LPARENT expression RPARENT EOL scope { $$ = new ast::WhileStatement($3, $6); }
            ;
 
 statements : statement            { $$ = std::vector<ast::Statement*>(); enlist($$, $1); }

@@ -21,7 +21,7 @@ void REPL::start()
       std::cout << ">> ";
       std::getline(std::cin, buffer);
     }
-    dispatchEvent(buffer);
+    dispatchEvent(buffer += "\n");
   }
 }
 
