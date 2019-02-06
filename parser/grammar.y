@@ -112,6 +112,7 @@
 %type <ast::CallStatement*> func_call
 %type <ast::ReturnStatement*> return
 %type <ast::WhileStatement*> while
+%type <ast::TypeOf*> typeof
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -131,6 +132,7 @@ expression : identifier { $$ = $1; }
            | literal { $$ = $1; }
            | pattern                       { $$ = $1; }
            | func_call { $$ = $1; }
+           | typeof { $$ = $1; }
            | expression expression PLUS        { $$ = new ast::Operation(ast::Operator::Addition, $1, $2); }
            | expression expression MINUS       { $$ = new ast::Operation(ast::Operator::Substraction, $1, $2); }
            | expression expression TIMES       { $$ = new ast::Operation(ast::Operator::Multiplication, $1, $2); }
@@ -238,7 +240,6 @@ statements : statement            { $$ = std::vector<ast::Statement*>(); enlist(
 command    : print   { $$ = $1; }
            | exit    { $$ = $1; }
            | load
-           | typeof
            ;
 
 print      : PRINT list { $$ = new ast::PrintStatement($2); }
@@ -250,7 +251,7 @@ exit       : EXIT { $$ = new ast::ExitStatement; }
 load       : LOAD STRING
            ;
 
-typeof     : TYPEOF expression
+typeof     : TYPEOF expression { $$ = new ast::TypeOf($2); }
            ;
 
 %%

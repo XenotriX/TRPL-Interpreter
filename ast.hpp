@@ -29,6 +29,7 @@ namespace ast
     Pattern,
     Function,
     Call,
+    TypeOf,
   };
 
   enum class Operator {
@@ -107,6 +108,12 @@ namespace ast
   {
     PrintStatement(std::vector<Expression*>);
     std::vector<Expression*> list;
+  };
+
+  struct TypeOf : Expression
+  {
+    TypeOf(Expression*);
+    Expression* expr;
   };
 
   struct VarDeclaration : Statement

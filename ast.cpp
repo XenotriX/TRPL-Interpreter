@@ -70,6 +70,12 @@ PrintStatement::PrintStatement(std::vector<Expression*> list) :
 
 }
 
+TypeOf::TypeOf(Expression* expr) :
+  expr(expr), Expression(ExprType::TypeOf)
+{
+
+}
+
 VarDeclaration::VarDeclaration(Identifier* name) :
   VarDeclaration(name, new Undefined())
 {

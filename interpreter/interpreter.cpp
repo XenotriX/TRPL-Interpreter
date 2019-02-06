@@ -289,6 +289,26 @@ Value Interpreter::eval(ast::Expression* expr) const
       return ret;
       break;
     }
+    case ast::ExprType::TypeOf:
+    {
+      auto typeOf = static_cast<ast::TypeOf*>(expr);
+      Value value = eval(typeOf->expr);
+      if (std::holds_alternative<double>(value))
+        return std::string("Number");
+      if (std::holds_alternative<std::string>(value))
+        return std::string("String");
+      if (std::holds_alternative<bool>(value))
+        return std::string("Boolean");
+      if (std::holds_alternative<std::vector<ast::Expression*>>(value))
+        return std::string("Array");
+      if (std::holds_alternative<std::unordered_map<std::string, ast::Expression*>>(value))
+        return std::string("Object");
+      if (std::holds_alternative<Undefined>(value))
+        return std::string("Undefined");
+      if (std::holds_alternative<ast::FunctionLiteral>(value))
+        return std::string("Function");
+      break;
+    }
     default:
     case ast::ExprType::Undefined:
       return Undefined();
