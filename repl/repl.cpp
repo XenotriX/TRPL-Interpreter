@@ -3,6 +3,7 @@
 
 void REPL::start()
 {
+  std::cout << "The Reactive Programming Language 1.0-beta" << std::endl;
   isRunning = true;
   indent = 0;
 
