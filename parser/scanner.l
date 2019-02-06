@@ -21,8 +21,8 @@ letter [a-zA-Z]
 
     #define INT_TOKEN(tok, val)     YIELD_TOKEN(tok, val, int)
     #define NUM_TOKEN(tok)          YIELD_TOKEN(tok, YY_NUM, double)
-    #define STR_TOKEN(tok)          YIELD_TOKEN(tok, YY_TXT, std::string)
-    #define LITERAL                 return yytext[0];
+    #define STR_TOKEN(tok)          YIELD_TOKEN(tok, YY_TXT.substr(1, yyleng - 2), std::string)
+    #define TXT_TOKEN(tok)          YIELD_TOKEN(tok, YY_TXT, std::string)
 
     // before executing an action, set the length of the location from
     // the length of the matched pattern:
@@ -67,7 +67,7 @@ letter [a-zA-Z]
 "if"                          return yy::parser::token::IF;
 "return"                      return yy::parser::token::RETURN;
 "while"                       return yy::parser::token::WHILE;
-{letter}({letter}|{digit})*   STR_TOKEN(yy::parser::token::IDENTIFIER);
+{letter}({letter}|{digit})*   TXT_TOKEN(yy::parser::token::IDENTIFIER);
 {digit}*("."{digit}*)?        NUM_TOKEN(yy::parser::token::NUMBER);
 \"[^"\\]*(?s:\\.[^"\\]*)*\"   STR_TOKEN(yy::parser::token::STRING);
 '[^'\\]*(?s:\\.[^'\\]*)*'     STR_TOKEN(yy::parser::token::STRING);

@@ -128,7 +128,7 @@ std::string Interpreter::toString(const Value& val) const
       return std::to_string((int)number);
     return std::to_string(number);
   }
-  else if (std::holds_alternative<std::string>(val)) return std::get<std::string>(val);
+  else if (std::holds_alternative<std::string>(val)) return "\"" + std::get<std::string>(val) + "\"";
   else if (std::holds_alternative<bool>(val)) return std::get<bool>(val) ? "true" : "false";
   else if (std::holds_alternative<Undefined>(val)) return "Undefined";
   else if (std::holds_alternative<std::vector<ast::Expression*>>(val)) {
