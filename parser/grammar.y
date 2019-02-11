@@ -88,6 +88,13 @@
 %token ARROW
 %token RETURN
 %token WHILE
+%token STRING_TYPE
+%token NUMBER_TYPE
+%token BOOLEAN_TYPE
+%token OBJECT_TYPE
+%token ARRAY_TYPE
+%token FUNCTION_TYPE
+
 %type <ast::Identifier*> identifier
 %type <ast::VarDeclaration*> vardec
 %type <ast::Assignment*> assignment
@@ -114,6 +121,7 @@
 %type <ast::WhileStatement*> while
 %type <ast::TypeOf*> typeof
 %type <ast::LoadStatement*> load
+%type <ast::TypeCast*> type_cast
 
 %%
 program    : statement          { cb->addStatement($1); }
@@ -134,6 +142,7 @@ expression : identifier { $$ = $1; }
            | pattern                       { $$ = $1; }
            | func_call { $$ = $1; }
            | typeof { $$ = $1; }
+           | type_cast { $$ = $1; }
            | expression expression PLUS        { $$ = new ast::Operation(ast::Operator::Addition, $1, $2); }
            | expression expression MINUS       { $$ = new ast::Operation(ast::Operator::Substraction, $1, $2); }
            | expression expression TIMES       { $$ = new ast::Operation(ast::Operator::Multiplication, $1, $2); }
@@ -144,6 +153,15 @@ expression : identifier { $$ = $1; }
            | expression GREATER expression     { $$ = new ast::Operation(ast::Operator::GreaterEqual, $1, $3); }
            | expression GREATER_EQL expression { $$ = new ast::Operation(ast::Operator::LessEqual, $1, $3); }
            ;
+
+type_cast  : expression COLON STRING_TYPE { $$ = new ast::TypeCast($1, ast::DataType::String); }
+           | expression COLON NUMBER_TYPE { $$ = new ast::TypeCast($1, ast::DataType::Number); }
+           | expression COLON BOOLEAN_TYPE { $$ = new ast::TypeCast($1, ast::DataType::Boolean); }
+           | expression COLON OBJECT_TYPE { $$ = new ast::TypeCast($1, ast::DataType::Object); }
+           | expression COLON ARRAY_TYPE { $$ = new ast::TypeCast($1, ast::DataType::Array); }
+           | expression COLON FUNCTION_TYPE { $$ = new ast::TypeCast($1, ast::DataType::Function); }
+           ;
+
 
 return     : RETURN expression  { $$ = new ast::ReturnStatement($2); }
            ;

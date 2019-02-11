@@ -67,6 +67,12 @@ letter [a-zA-Z]
 "if"                          return yy::parser::token::IF;
 "return"                      return yy::parser::token::RETURN;
 "while"                       return yy::parser::token::WHILE;
+"String"                      return yy::parser::token::STRING_TYPE;
+"Number"                      return yy::parser::token::NUMBER_TYPE;
+"Boolean"                     return yy::parser::token::BOOLEAN_TYPE;
+"Object"                      return yy::parser::token::OBJECT_TYPE;
+"Array"                       return yy::parser::token::ARRAY_TYPE;
+"Function"                    return yy::parser::token::FUNCTION_TYPE;
 {letter}({letter}|{digit})*   TXT_TOKEN(yy::parser::token::IDENTIFIER);
 {digit}*("."{digit}*)?        NUM_TOKEN(yy::parser::token::NUMBER);
 \"[^"\\]*(?s:\\.[^"\\]*)*\"   STR_TOKEN(yy::parser::token::STRING);

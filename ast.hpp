@@ -6,6 +6,15 @@
 
 namespace ast
 {
+  enum class DataType {
+    Number,
+    String,
+    Boolean,
+    Array,
+    Object,
+    Function
+  };
+
   enum class StmtType {
     Print,
     VarDeclaration,
@@ -31,6 +40,7 @@ namespace ast
     Function,
     Call,
     TypeOf,
+    Cast,
   };
 
   enum class Operator {
@@ -115,6 +125,13 @@ namespace ast
   {
     TypeOf(Expression*);
     Expression* expr;
+  };
+
+  struct TypeCast : Expression
+  {
+    TypeCast(Expression* expr, DataType type);
+    Expression* expr;
+    DataType type;
   };
 
   struct VarDeclaration : Statement

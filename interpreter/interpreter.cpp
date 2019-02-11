@@ -331,6 +331,50 @@ Value Interpreter::eval(ast::Expression* expr) const
         return std::string("Function");
       break;
     }
+    case ast::ExprType::Cast:
+    {
+      auto cast = static_cast<ast::TypeCast*>(expr);
+      Value val = eval(cast->expr);
+      switch (cast->type) {
+        case ast::DataType::Number:
+          if (std::holds_alternative<double>(val)) return val;
+          if (std::holds_alternative<bool>(val))
+            return (double)std::get<bool>(val);
+          if (std::holds_alternative<std::string>(val))
+            return atof(std::get<std::string>(val).c_str());
+          throw std::invalid_argument("Invalid type cast");
+          break;
+        case ast::DataType::String:
+          return toString(val);
+          break;
+        case ast::DataType::Boolean:
+          if (std::holds_alternative<bool>(val)) return val;
+          if (std::holds_alternative<double>(val))
+            return std::get<double>(val) == 0 ? false : true;
+          if (std::holds_alternative<std::string>(val)) {
+            std::string str = std::get<std::string>(val);
+            if (str == "true") return true;
+            if (str == "false") return false;
+          }
+          throw std::invalid_argument("Invalid type cast");
+          break;
+        case ast::DataType::Object:
+          if (std::holds_alternative<
+              std::unordered_map<std::string, ast::Expression*>>(val))
+            return val;
+          throw std::invalid_argument("Invalid type cast");
+          break;
+        case ast::DataType::Array:
+          if (std::holds_alternative<std::vector<ast::Expression*>>(val))
+            return val;
+          throw std::invalid_argument("Invalid type cast");
+          break;
+        case ast::DataType::Function:
+          throw std::invalid_argument("Invalid type cast");
+          break;
+      }
+      break;
+    }
     default:
     case ast::ExprType::Undefined:
       return Undefined();

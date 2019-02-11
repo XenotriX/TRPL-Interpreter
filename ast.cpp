@@ -76,6 +76,12 @@ TypeOf::TypeOf(Expression* expr) :
 
 }
 
+TypeCast::TypeCast(Expression* expr, DataType type) :
+  expr(expr), type(type), Expression(ExprType::Cast)
+{
+
+}
+
 VarDeclaration::VarDeclaration(Identifier* name) :
   VarDeclaration(name, new Undefined())
 {
